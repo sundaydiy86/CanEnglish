@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="粵音英聯">
   <meta name="theme-color" content="#F2F2F7">
-  <title>粵音英聯 | 廣東話延伸記憶字典</title>
+  <title>粵音英聯 | 廣東話延伸記憶字典 (7日自動清理)</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -82,16 +82,16 @@
         <div>
           <div class="flex items-center space-x-1.5">
             <h1 class="text-base font-bold text-gray-900 tracking-tight leading-none">粵音英聯</h1>
-            <span class="text-[10px] px-1.5 py-0.5 bg-blue-100/70 text-iosBlue rounded font-semibold tracking-wide">AI • 廣東話</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-blue-100/70 text-iosBlue rounded font-semibold tracking-wide">7日記憶週期</span>
           </div>
           <p class="text-[11px] text-gray-500 font-medium">母語諧音 • 時事例句 • 延伸記憶法</p>
         </div>
       </div>
       
       <div class="flex items-center space-x-1.5">
-        <button id="ai-status-indicator" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center space-x-1 shadow-2xs">
+        <button id="ai-status-indicator" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center space-x-1 shadow-2xs" title="點擊檢視雲端清理狀態">
           <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span id="sync-status-text">運作正常</span>
+          <span id="sync-status-text">7日自動清理</span>
         </button>
         <button id="add-word-btn" title="手動收錄新詞" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition active:scale-90 shadow-2xs">
           <i class="ph-bold ph-plus text-base"></i>
@@ -163,8 +163,14 @@
         <div class="space-y-1">
           <h3 class="font-extrabold text-base text-gray-900">準備好開始查字！</h3>
           <p class="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-            在上方搜尋列輸入任何英文單字或片語（例如點擊上方 <span class="font-bold text-iosBlue">reluctant</span> 或 <span class="font-bold text-iosBlue">call it a day</span>），系統會即時為你生成廣東話諧音卡、雙新聞例句及同反義詞網絡！
+            在上方搜尋列輸入任何英文單字或片語（例如點擊上方 <span class="font-bold text-iosBlue">reluctant</span> 或 <span class="font-bold text-iosBlue">call it a day</span>），系統會即時為你生成廣東話諧音卡！
           </p>
+          <div class="pt-2">
+            <span class="inline-flex items-center space-x-1 text-[11px] bg-amber-50 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200 font-medium">
+              <i class="ph-bold ph-clock-countdown text-amber-600"></i>
+              <span>所有查詢生字均享 7 天雲端記憶，過期自動清理</span>
+            </span>
+          </div>
         </div>
         <div class="pt-1">
           <button id="quick-try-btn" class="px-4 py-2 bg-iosBlue text-white text-xs font-bold rounded-xl shadow-sm hover:bg-blue-600 active:scale-95 transition">
@@ -187,9 +193,13 @@
               <button id="tts-word-btn" title="聽發音" class="w-7 h-7 rounded-full bg-blue-50 text-iosBlue hover:bg-iosBlue hover:text-white flex items-center justify-center transition active:scale-90 shadow-2xs">
                 <i class="ph-bold ph-speaker-simple-high text-xs"></i>
               </button>
+              <span id="card-expire-tag" class="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-medium flex items-center space-x-0.5">
+                <i class="ph-bold ph-hourglass-high"></i>
+                <span id="card-expire-text">剩餘 7 天</span>
+              </span>
             </div>
           </div>
-          <button id="bookmark-btn" title="加入生字簿" class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90">
+          <button id="bookmark-btn" title="加入精選" class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90">
             <i class="ph-fill ph-bookmark-simple text-xl"></i>
           </button>
         </div>
@@ -289,7 +299,7 @@
         </div>
         <h3 class="font-extrabold text-base text-gray-900">生字庫暫無單字可供複習</h3>
         <p class="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-          請先在「查單字」搜尋任何單字或片語（例如點擊上方推薦字），系統會為你自動收錄並生成同反義詞延伸記憶題目！
+          請先在「查單字」搜尋任何單字或片語（例如點擊上方推薦字），系統會為你自動收錄並保留 7 天進行延伸記憶複習！
         </p>
       </div>
 
@@ -345,14 +355,17 @@
     <section id="tab-wordbook" class="hidden space-y-3">
       <div class="flex items-center justify-between px-1">
         <div>
-          <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">我的生字庫</span>
-          <p class="text-[11px] text-gray-400">點擊卡片可即時查看口訣與例句</p>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">我的生字庫</span>
+            <span class="text-[10px] bg-amber-100 text-amber-800 font-semibold px-1.5 py-0.2 rounded border border-amber-200">7天自動過期</span>
+          </div>
+          <p class="text-[11px] text-gray-400">超過 7 天未溫習的生字會由 Firebase 自動清除</p>
         </div>
         <div class="flex items-center space-x-1.5">
           <span id="wordbook-count" class="text-xs font-bold px-2 py-0.5 bg-blue-50 text-iosBlue rounded-full">共 0 個</span>
-          <button id="clear-all-words-btn" title="清空全部生字" class="px-2 py-0.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full text-[11px] font-semibold border border-rose-200 active:scale-95 transition flex items-center space-x-1">
+          <button id="clear-all-words-btn" title="手動清空全部生字" class="px-2 py-0.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full text-[11px] font-semibold border border-rose-200 active:scale-95 transition flex items-center space-x-1">
             <i class="ph-bold ph-trash text-xs"></i>
-            <span>清空全部</span>
+            <span>清空</span>
           </button>
         </div>
       </div>
@@ -411,7 +424,7 @@
     </div>
   </div>
 
-  <!-- Modal: 自訂 iOS 確認清空對話框 (Custom Confirm Dialog - 杜絕 confirm 崩潰) -->
+  <!-- Modal: 自訂 iOS 確認清空對話框 -->
   <div id="confirm-dialog-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 border border-gray-100 text-center">
       <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl">
@@ -428,13 +441,13 @@
     </div>
   </div>
 
-  <!-- Modal: 雲端同步與金鑰設定 -->
+  <!-- Modal: 7 天生命週期與 Firebase 狀態 -->
   <div id="cloud-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
       <div class="flex items-center justify-between border-b pb-2.5">
         <div class="flex items-center space-x-2">
-          <i class="ph-bold ph-cloud-check text-iosBlue text-lg"></i>
-          <h3 class="font-bold text-sm text-gray-900">系統與雲端狀態</h3>
+          <i class="ph-bold ph-clock-countdown text-iosBlue text-lg"></i>
+          <h3 class="font-bold text-sm text-gray-900">7 日生命週期與雲端設定</h3>
         </div>
         <button id="close-cloud-modal-btn" class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
           <i class="ph-bold ph-x text-xs"></i>
@@ -442,13 +455,25 @@
       </div>
 
       <div class="space-y-3 text-xs">
+        <!-- 7-Day TTL Policy Info Card -->
+        <div class="p-3 bg-amber-50/80 rounded-xl border border-amber-200/90 space-y-1.5">
+          <div class="flex items-center space-x-1.5 text-amber-900 font-bold">
+            <i class="ph-bold ph-info text-amber-600 text-sm"></i>
+            <span>7 日自動清理原則（TTL）</span>
+          </div>
+          <p class="text-[11px] text-amber-800 leading-relaxed">
+            每個查過或手動加入的生字自儲存時刻起算，在 Firebase 資料庫中保留 <strong>7 天（168 小時）</strong>。
+            時間一到，系統會<strong>自動從 Firebase 永久抹除</strong>，協助你保持生字庫精簡！
+          </p>
+        </div>
+
         <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5">
           <div class="flex items-center justify-between">
             <span class="text-gray-500 font-medium">資料庫狀態</span>
-            <span id="modal-conn-badge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">本地離線 + 雲端同步</span>
+            <span id="modal-conn-badge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">已啟用 7 日自動過期</span>
           </div>
           <div class="space-y-1 pt-1 border-t border-gray-200/60">
-            <span class="text-gray-500 font-medium block">雲端目標:</span>
+            <span class="text-gray-500 font-medium block">雲端 Realtime Database:</span>
             <div class="p-2 bg-blue-50/80 rounded-lg border border-blue-200/80 font-mono text-[10px] text-blue-900 break-all select-all">
               https://caneng-a8157-default-rtdb.firebaseio.com/
             </div>
@@ -458,7 +483,7 @@
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
           <label class="block font-semibold text-gray-700 flex items-center justify-between">
             <span>Gemini AI API Key (可選填)</span>
-            <span class="text-[10px] text-gray-400 font-normal">留空自動以智慧字典生成</span>
+            <span class="text-[10px] text-gray-400 font-normal">留空以內建智能字典生成</span>
           </label>
           <input id="custom-gemini-key" type="password" placeholder="AIzaSy... (若在個人環境查詞可填)" class="w-full px-2.5 py-2 border rounded-xl font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
@@ -497,10 +522,13 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 內建強大的高質量核心字典與諧音庫（保證零網絡、離線或無 API Key 時完全可用）
+    // 7 天過期時間常數（毫秒）：7 日 * 24 小時 * 60 分鐘 * 60 秒 * 1000 毫秒
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+    // 內建核心字典庫（作為基礎參考）
     const masterDictionary = {
       "reluctant": {
         word: "reluctant",
@@ -626,24 +654,79 @@
     let auth = null;
     let currentUserId = null;
 
+    // 計算剩餘天數文字
+    function getRemainingDaysText(timestamp) {
+      if (!timestamp) return "剩餘 7 天";
+      const now = Date.now();
+      const elapsed = now - timestamp;
+      const remainingMs = SEVEN_DAYS_MS - elapsed;
+      if (remainingMs <= 0) return "已過期";
+      const days = Math.floor(remainingMs / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((remainingMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      if (days > 0) {
+        return `剩餘 ${days} 天 ${hours} 小時`;
+      }
+      return `剩餘 ${hours} 小時`;
+    }
+
     function updateSyncIndicator(status, text) {
       const dot = document.getElementById('sync-dot');
       const label = document.getElementById('sync-status-text');
       if (!dot || !label) return;
       if (status === 'synced') {
         dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
-        label.textContent = text || `已累積 ${vocabList.length} 詞`;
+        label.textContent = text || `已累積 ${vocabList.length} 詞 (7日輪替)`;
       } else if (status === 'syncing') {
         dot.className = "w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping";
-        label.textContent = text || "正在同步";
+        label.textContent = text || "正在同步並清理過期詞";
       } else {
         dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
-        label.textContent = text || (vocabList.length > 0 ? `已累積 ${vocabList.length} 詞` : "運作正常");
+        label.textContent = text || (vocabList.length > 0 ? `已累積 ${vocabList.length} 詞` : "7日自動清理");
       }
     }
 
+    // 核心：檢查並向 Firebase 刪除已超過 7 天的過期詞
+    async function purgeExpiredVocabulary(items) {
+      const now = Date.now();
+      const validItems = [];
+      const expiredItems = [];
+
+      items.forEach(item => {
+        const itemTime = item.timestamp || now;
+        if (now - itemTime > SEVEN_DAYS_MS) {
+          expiredItems.push(item);
+        } else {
+          validItems.push(item);
+        }
+      });
+
+      // 若有過期詞，立即非同步向 Firebase 發起 DELETE 清理
+      if (expiredItems.length > 0) {
+        console.log(`[7-Day TTL] 發現 ${expiredItems.length} 個超過 7 天的單字，正在自 Firebase 抹除...`);
+        expiredItems.forEach(exp => {
+          const cleanId = (exp.id || '').replace(/[.$#[\]/]/g, '_');
+          if (!cleanId) return;
+
+          // 1. 從 Firestore 刪除
+          if (db && currentUserId) {
+            deleteDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies', cleanId)).catch(() => {});
+          }
+
+          // 2. 從 Realtime Database 刪除
+          if (TARGET_RTDB_URL) {
+            const userPath = currentUserId ? `users/${currentUserId}/` : '';
+            fetch(`${TARGET_RTDB_URL}/${userPath}vocabularies/${cleanId}.json`, {
+              method: 'DELETE'
+            }).catch(() => {});
+          }
+        });
+      }
+
+      return validItems;
+    }
+
     async function initCloudPersistence() {
-      updateSyncIndicator('syncing', '載入生字庫...');
+      updateSyncIndicator('syncing', '檢查 7 日過期詞...');
       try {
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
           ? JSON.parse(__firebase_config) 
@@ -660,7 +743,6 @@
         db = getFirestore(app);
         auth = getAuth(app);
 
-        // 遵循 Rule 3: 優先使用自訂權杖，否則匿名認證
         const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         if (initialToken) {
           await signInWithCustomToken(auth, initialToken);
@@ -672,11 +754,9 @@
         if (!user) return;
         currentUserId = user.uid;
 
-        // 遵循 Rule 1: 存取專屬路徑 /artifacts/{appId}/users/{userId}/vocabularies
         const userVocabCol = collection(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies');
         
-        // 遵循 Rule 2: 簡單 collection 查詢，無複雜索引
-        onSnapshot(userVocabCol, (snapshot) => {
+        onSnapshot(userVocabCol, async (snapshot) => {
           const cloudItems = [];
           snapshot.forEach(docSnap => {
             const data = docSnap.data();
@@ -685,47 +765,48 @@
             }
           });
 
-          // 若雲端有歷史生字，自動累積還原至生字庫中
           if (cloudItems.length > 0) {
-            // 合併記憶體與雲端資料，以最新時間戳排序
-            cloudItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            vocabList = cloudItems;
+            // 執行 7 日過期篩選與清理
+            const valid = await purgeExpiredVocabulary(cloudItems);
+            valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            vocabList = valid;
             renderWordbookList();
-            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
+            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
           } else {
-            // 同時從 RTDB 備份拉取已保存的生字
+            // 從 RTDB 備份拉取
             fetch(`${TARGET_RTDB_URL}/users/${currentUserId}/vocabularies.json`)
               .then(res => res.json())
-              .then(data => {
+              .then(async data => {
                 if (data && typeof data === 'object') {
                   const rtdbItems = Object.values(data).filter(item => item && item.word);
                   if (rtdbItems.length > 0) {
-                    rtdbItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    vocabList = rtdbItems;
+                    const valid = await purgeExpiredVocabulary(rtdbItems);
+                    valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    vocabList = valid;
                     renderWordbookList();
-                    updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
+                    updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
                   }
                 }
               })
               .catch(() => {});
           }
         }, (error) => {
-          console.debug("Firestore snapshot notice:", error);
+          console.debug("Firestore snapshot note:", error);
           updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
         });
 
       } catch (err) {
         console.debug("Persistence init note:", err);
-        // 離線或網絡阻斷時，嘗試從 RTDB REST 端點恢復
         fetch(`${TARGET_RTDB_URL}/vocabularies.json`)
           .then(res => res.json())
-          .then(data => {
+          .then(async data => {
             if (data && typeof data === 'object') {
               const items = Object.values(data).filter(item => item && item.word);
               if (items.length > 0) {
-                vocabList = items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                const valid = await purgeExpiredVocabulary(items);
+                vocabList = valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 renderWordbookList();
-                updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
+                updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
               }
             }
           })
@@ -733,7 +814,7 @@
       }
     }
 
-    // 智能演算法生成器（永不失敗保證）
+    // 智能演算法生成器（保證永不失敗）
     function generateSmartFallbackVocabulary(query) {
       const q = query.trim();
       const tokens = q.split(/[,，;\s]+/).map(t => t.trim()).filter(Boolean);
@@ -748,9 +829,10 @@
 
       const firstToken = tokens[0] || q;
       const punLead = firstToken.slice(0, 4);
+      const now = Date.now();
 
       return {
-        id: "v_" + Date.now(),
+        id: "v_" + now,
         word: q,
         phonetic: `/${q.toLowerCase()}/`,
         pos: isPhrase ? "phrase / idiom" : "word",
@@ -778,7 +860,8 @@
         },
         favorite: false,
         isCustomSearch: true,
-        timestamp: Date.now()
+        timestamp: now,
+        expiresAt: now + SEVEN_DAYS_MS
       };
     }
 
@@ -836,9 +919,10 @@
       const lastB = stripped.lastIndexOf('}');
       const jsonStr = (firstB !== -1 && lastB !== -1) ? stripped.slice(firstB, lastB + 1) : stripped;
       const parsed = JSON.parse(jsonStr);
+      const now = Date.now();
 
       return {
-        id: "v_" + Date.now(),
+        id: "v_" + now,
         word: parsed.word || query,
         phonetic: parsed.phonetic || `/${query}/`,
         pos: parsed.pos || 'expression',
@@ -858,12 +942,16 @@
         },
         favorite: false,
         isCustomSearch: true,
-        timestamp: Date.now()
+        timestamp: now,
+        expiresAt: now + SEVEN_DAYS_MS
       };
     }
 
     async function saveToCloudSafely(item) {
-      updateSyncIndicator('syncing', '正在儲存...');
+      updateSyncIndicator('syncing', '正在儲存 (7天有效期)...');
+      if (!item.timestamp) item.timestamp = Date.now();
+      if (!item.expiresAt) item.expiresAt = item.timestamp + SEVEN_DAYS_MS;
+
       const cleanId = (item.id || 'w_' + Date.now()).replace(/[.$#[\]/]/g, '_');
 
       // 1. 存入 Firestore 私人路徑
@@ -876,7 +964,7 @@
         console.debug("Firestore save note:", e);
       }
 
-      // 2. 存入 Realtime Database 永久備份
+      // 2. 存入 Realtime Database
       if (TARGET_RTDB_URL) {
         try {
           const userPath = currentUserId ? `users/${currentUserId}/` : '';
@@ -885,7 +973,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(item)
           }).then(() => {
-            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
+            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
           }).catch(() => {
             updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
           });
@@ -948,6 +1036,12 @@
       document.getElementById('card-cantonese-pun').textContent = item.cantoneseMnemonic?.pun || '';
       document.getElementById('card-cantonese-story').innerHTML = item.cantoneseMnemonic?.story || '';
       document.getElementById('card-visual-cue').innerHTML = `<strong>圖像記憶：</strong>${item.cantoneseMnemonic?.visualCue || ''}`;
+
+      // 顯示 7 天剩餘時間
+      const expireTextEl = document.getElementById('card-expire-text');
+      if (expireTextEl) {
+        expireTextEl.textContent = getRemainingDaysText(item.timestamp);
+      }
 
       // Breakdown Box
       const breakdownBox = document.getElementById('card-breakdown-box');
@@ -1106,25 +1200,34 @@
         document.getElementById('multi-word-breakdown-panel').classList.add('hidden');
       }
 
-      // 1. 先查本地已存生字庫
+      // 1. 先查本地已存生字庫（並刷新其 7 天有效期）
       const exactInSaved = vocabList.find(item => item.word.toLowerCase() === q.toLowerCase());
       if (exactInSaved) {
         exactInSaved.timestamp = Date.now();
+        exactInSaved.expiresAt = exactInSaved.timestamp + SEVEN_DAYS_MS;
         renderVocabCard(exactInSaved);
         renderWordbookList();
-        showToast(`已載入「${exactInSaved.word}」！`);
+        saveToCloudSafely(exactInSaved);
+        showToast(`已載入「${exactInSaved.word}」，7天記憶期已刷新！`);
         return;
       }
 
       // 2. 再查內建核心字典庫（零延遲秒開）
       const lower = q.toLowerCase();
       if (masterDictionary[lower]) {
-        const item = { ...masterDictionary[lower], id: 'v_' + Date.now(), isCustomSearch: true, timestamp: Date.now() };
+        const now = Date.now();
+        const item = { 
+          ...masterDictionary[lower], 
+          id: 'v_' + now, 
+          isCustomSearch: true, 
+          timestamp: now,
+          expiresAt: now + SEVEN_DAYS_MS 
+        };
         vocabList.unshift(item);
         renderVocabCard(item);
         renderWordbookList();
         saveToCloudSafely(item);
-        showToast(`已載入「${item.word}」！`);
+        showToast(`已收錄「${item.word}」，7天後自動清理`);
         return;
       }
 
@@ -1140,7 +1243,7 @@
         renderVocabCard(aiVocab);
         renderWordbookList();
         saveToCloudSafely(aiVocab);
-        showToast(`已收錄「${aiVocab.word}」至生字庫！`);
+        showToast(`已收錄「${aiVocab.word}」，享受 7 天雲端記憶！`);
       } catch (err) {
         // 4. 無縫智慧推導保證（永不卡死）
         const fallbackVocab = generateSmartFallbackVocabulary(q);
@@ -1148,7 +1251,7 @@
         renderVocabCard(fallbackVocab);
         renderWordbookList();
         saveToCloudSafely(fallbackVocab);
-        showToast(`已建立「${fallbackVocab.word}」記憶卡片！`);
+        showToast(`已建立「${fallbackVocab.word}」，7天後自動清理`);
       } finally {
         loadingState.classList.add('hidden');
       }
@@ -1197,7 +1300,6 @@
         }
       });
 
-      // 補齊 4 個選項
       const fillerWords = ["eager", "hesitant", "continue", "misfortune", "scrupulous", "thorough"];
       fillerWords.forEach(f => {
         if (options.length < 4 && !options.includes(f) && f !== correctAnswer) {
@@ -1309,21 +1411,25 @@
           <div class="bg-white rounded-xl p-8 border border-gray-100 text-center space-y-2">
             <i class="ph-bold ph-notebook text-3xl text-gray-300"></i>
             <p class="text-xs font-medium text-gray-400">生字庫暫時為空，在上方搜尋即可自動收錄！</p>
+            <p class="text-[10px] text-amber-700">（所有生字保存 7 天後自動過期清理）</p>
           </div>
         `;
         return;
       }
 
       filtered.forEach(item => {
+        const remainingStr = getRemainingDaysText(item.timestamp);
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-3.5 border border-gray-100 ios-card-shadow flex items-center justify-between hover:border-iosBlue transition cursor-pointer active:bg-gray-50';
         card.innerHTML = `
           <div class="space-y-0.5 pr-2">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1.5 flex-wrap">
               <span class="font-bold text-sm text-gray-900">${item.word}</span>
               <span class="text-[10px] text-gray-400 font-mono">${item.phonetic}</span>
               ${item.favorite ? '<i class="ph-fill ph-star text-amber-400 text-xs"></i>' : ''}
-              ${item.isCustomSearch ? '<span class="text-[9px] px-1 py-0.2 bg-blue-50 text-iosBlue rounded font-semibold border border-blue-100">查過</span>' : ''}
+              <span class="text-[9px] px-1.5 py-0.2 bg-amber-50 text-amber-700 rounded font-semibold border border-amber-200">
+                ${remainingStr}
+              </span>
             </div>
             <p class="text-xs text-gray-600 font-medium">${item.chineseMeaning}</p>
             <p class="text-[11px] text-iosOrange font-semibold">口訣：${item.cantoneseMnemonic?.pun || '無'}</p>
@@ -1381,7 +1487,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 初始為空（符合要求）
       renderVocabCard(null);
       renderWordbookList();
 
@@ -1421,7 +1526,7 @@
         generateQuizQuestion();
       });
 
-      // 清空全部生字功能（完全不使用 confirm()）
+      // 清空全部生字功能
       const confirmDialog = document.getElementById('confirm-dialog-modal');
       document.getElementById('clear-all-words-btn').addEventListener('click', () => {
         if (vocabList.length === 0) {
@@ -1445,7 +1550,7 @@
         showToast("已成功清空所有生字！");
         updateSyncIndicator('synced', "生字庫已清空");
 
-        // 同步刪除雲端記錄
+        // 同步自雲端抹除
         if (db && currentUserId) {
           toDelete.forEach(item => {
             const cleanId = (item.id || '').replace(/[.$#[\]/]/g, '_');
@@ -1531,8 +1636,9 @@
           return;
         }
 
+        const now = Date.now();
         const newVocab = {
-          id: 'v_' + Date.now(),
+          id: 'v_' + now,
           word: word,
           phonetic: `/${word.toLowerCase()}/`,
           pos: "expression",
@@ -1553,7 +1659,8 @@
           },
           favorite: true,
           isCustomSearch: true,
-          timestamp: Date.now()
+          timestamp: now,
+          expiresAt: now + SEVEN_DAYS_MS
         };
 
         vocabList.unshift(newVocab);
@@ -1561,7 +1668,7 @@
         renderWordbookList();
         renderVocabCard(newVocab);
         addModal.classList.add('hidden');
-        showToast(`已成功收錄「${word}」！`);
+        showToast(`已成功收錄「${word}」，7天後自動清理`);
 
         document.getElementById('input-new-word').value = '';
         document.getElementById('input-new-meaning').value = '';
@@ -1570,7 +1677,7 @@
         document.getElementById('input-new-ant').value = '';
       });
 
-      // 啟動雲端永久記憶連線，自動累計並還原查過的所有生字
+      // 啟動雲端連線並自動執行「7 日過期詞清理」
       initCloudPersistence();
     });
   </script>
