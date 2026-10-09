@@ -96,8 +96,8 @@
       
       <div class="flex items-center space-x-1.5">
         <button id="ai-status-indicator" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center space-x-1 shadow-2xs">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-          <span>隨查隨解</span>
+          <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+          <span id="sync-status-text">雲端記憶中</span>
         </button>
         <button id="add-word-btn" title="手動收錄新詞" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition active:scale-90 shadow-2xs">
           <i class="ph-bold ph-plus text-base"></i>
@@ -357,6 +357,7 @@
       <div class="flex items-center space-x-1.5 text-xs pb-1">
         <button id="filter-all-btn" class="px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs">全部詞彙</button>
         <button id="filter-fav-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50">精選星標 ⭐</button>
+        <button id="filter-searched-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50">歷史查過 🔍</button>
       </div>
 
       <div id="wordbook-list" class="space-y-2">
@@ -433,7 +434,22 @@
     </div>
   </nav>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInAnonymously, 
+      signInWithCustomToken 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc, 
+      updateDoc, 
+      onSnapshot, 
+      collection 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
     // 預設精選詞庫（針對廣東話母語學習者設計，包含最新新聞語境例句及拆解）
     const defaultVocabulary = [
       {
@@ -593,7 +609,9 @@
           story: "「死忍」痛苦之後，終於得到厚「皮」回報，原來係「意想不到嘅美好驚喜同好運」！",
           visualCue: "一個喺街行緊被舊書絆倒嘅人，低頭一睇發現地下竟然夾住一張頭獎彩票。"
         },
-        favorite: true
+        favorite: true,
+        isCustomSearch: false,
+        timestamp: 1700000000000
       }
     ];
 
@@ -604,6 +622,117 @@
     let quizStreak = 0;
     let currentQuizData = null;
     let activeFilter = 'all';
+
+    // Firebase 雲端自動記憶狀態
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'cantonese-mnemonic-app';
+    let db = null;
+    let auth = null;
+    let userId = null;
+
+    function updateSyncIndicator(status, text) {
+      const dot = document.getElementById('sync-dot');
+      const label = document.getElementById('sync-status-text');
+      if (!dot || !label) return;
+      if (status === 'synced') {
+        dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+        label.textContent = text || "已自動記憶";
+      } else if (status === 'syncing') {
+        dot.className = "w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping";
+        label.textContent = text || "同步儲存中";
+      } else {
+        dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
+        label.textContent = text || "本機模式";
+      }
+    }
+
+    async function initCloudStorage() {
+      try {
+        if (typeof __firebase_config === 'undefined') {
+          updateSyncIndicator('offline', '離線生字庫');
+          return;
+        }
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // 規則 3：先完成認證
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        userId = auth.currentUser?.uid || crypto.randomUUID();
+        updateSyncIndicator('synced', '雲端生字庫連線');
+
+        // 規則 1 & 2：私有路徑 + 無複合索引監聽
+        const vocabCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'vocabularies');
+
+        onSnapshot(vocabCollectionRef, (snapshot) => {
+          const userSavedWords = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data && data.word) {
+              userSavedWords.push(data);
+            }
+          });
+
+          if (userSavedWords.length > 0) {
+            // 按時間排序（最新查過的放最前，方便優先複習）
+            userSavedWords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            // 合併預設字庫（避免重複）
+            const savedWordKeys = new Set(userSavedWords.map(w => w.word.toLowerCase()));
+            const remainingDefaults = defaultVocabulary.filter(d => !savedWordKeys.has(d.word.toLowerCase()));
+            vocabList = [...userSavedWords, ...remainingDefaults];
+          } else {
+            // 初次使用時自動儲存預設字詞至雲端，確保往後一致記憶
+            defaultVocabulary.forEach((item) => {
+              saveWordToCloud({ ...item, timestamp: Date.now() });
+            });
+          }
+
+          renderWordbookList();
+          updateSyncIndicator('synced', `已記憶 ${vocabList.length} 詞`);
+        }, (error) => {
+          console.error("Firestore onSnapshot error:", error);
+          updateSyncIndicator('offline', '離線快取中');
+        });
+
+      } catch (err) {
+        console.error("Firebase 初始化失敗:", err);
+        updateSyncIndicator('offline', '本機儲存');
+      }
+    }
+
+    // 儲存或更新單字至雲端
+    async function saveWordToCloud(item) {
+      if (!db || !userId) return;
+      try {
+        updateSyncIndicator('syncing', '正在記憶新詞');
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'vocabularies', item.id);
+        await setDoc(docRef, {
+          ...item,
+          timestamp: item.timestamp || Date.now()
+        }, { merge: true });
+        updateSyncIndicator('synced', '已自動記憶');
+      } catch (err) {
+        console.error("儲存生字失敗:", err);
+      }
+    }
+
+    // 更新星標狀態至雲端
+    async function updateWordFavoriteInCloud(item) {
+      if (!db || !userId) return;
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'vocabularies', item.id);
+        await updateDoc(docRef, { favorite: item.favorite });
+      } catch (err) {
+        console.error("更新星標失敗:", err);
+      }
+    }
 
     // 簡易純程式合成音效（無外部音訊依賴）
     function playTapAudio(isSuccess = true) {
@@ -712,7 +841,9 @@
           story: parsed.cantoneseMnemonic?.story || `利用母語諧音發音，生動記憶 ${query}！`,
           visualCue: parsed.cantoneseMnemonic?.visualCue || `腦海中想像一個誇張有趣的場景。`
         },
-        favorite: false
+        favorite: false,
+        isCustomSearch: true,
+        timestamp: Date.now()
       };
     }
 
@@ -932,8 +1063,13 @@
       // 首先尋找本地是否有完全符合的單字或片語
       const exactMatch = vocabList.find(item => item.word.toLowerCase() === q.toLowerCase());
       if (exactMatch) {
+        // 更新最近查閱時間，方便排到最前複習
+        exactMatch.timestamp = Date.now();
+        exactMatch.isCustomSearch = true;
+        saveWordToCloud(exactMatch);
         renderVocabCard(exactMatch);
-        showToast(`已載入「${exactMatch.word}」`);
+        renderWordbookList();
+        showToast(`已載入「${exactMatch.word}」並排入優先複習！`);
         return;
       }
 
@@ -949,13 +1085,16 @@
         renderVocabCard(aiVocab);
         renderWordbookList();
         
+        // 自動永久儲存至雲端生字庫
+        saveWordToCloud(aiVocab);
+
         // 若 AI 回傳了拆解項，同步更新多詞面板
         if (aiVocab.breakdown && aiVocab.breakdown.length > 1) {
           const breakdownTokens = aiVocab.breakdown.map(b => b.word);
           renderMultiWordPanel(breakdownTokens);
         }
 
-        showToast(`已分別解析並生成「${aiVocab.word}」卡片！`);
+        showToast(`已分別解析並自動加入「${aiVocab.word}」至永久生字庫！`);
       } catch (err) {
         console.error("Gemini 查詢失敗，切換至備用在地拆解:", err);
         // 本地多詞拆解回退方案
@@ -985,12 +1124,15 @@
             story: `利用母語諧音，將 ${q} 嘅個別字音同整體意思緊扣！`,
             visualCue: `腦海中將這幾個字具象化為一個生動互動的畫面。`
           },
-          favorite: false
+          favorite: false,
+          isCustomSearch: true,
+          timestamp: Date.now()
         };
         vocabList.unshift(fallbackVocab);
+        saveWordToCloud(fallbackVocab);
         renderVocabCard(fallbackVocab);
         renderWordbookList();
-        showToast(`已為你建立「${q}」多詞解析卡！`);
+        showToast(`已為你建立「${q}」並已自動儲存！`);
       } finally {
         loadingState.classList.add('hidden');
         vocabCard.classList.remove('opacity-40', 'pointer-events-none');
@@ -1007,8 +1149,16 @@
     function generateQuizQuestion() {
       if (vocabList.length === 0) return;
 
-      // 隨機選一個字
-      const targetItem = vocabList[Math.floor(Math.random() * vocabList.length)];
+      // 優先抽取用戶真正查過 (isCustomSearch) 或星標 (favorite) 的字詞進行延伸複習
+      const userSearchedPool = vocabList.filter(item => item.isCustomSearch || item.favorite);
+      let targetItem;
+      if (userSearchedPool.length > 0 && Math.random() < 0.75) {
+        // 75% 機率優先考你查過或收藏的單字
+        targetItem = userSearchedPool[Math.floor(Math.random() * userSearchedPool.length)];
+      } else {
+        targetItem = vocabList[Math.floor(Math.random() * vocabList.length)];
+      }
+
       // 隨機決定考反義詞或同義詞（若無反義詞則考同義詞）
       const canTestAntonym = targetItem.antonyms && targetItem.antonyms.length > 0;
       const isAntonymTest = canTestAntonym ? (Math.random() > 0.45) : false;
@@ -1047,12 +1197,13 @@
         correctAnswer: correctAnswer,
         options: options,
         synonyms: targetItem.synonyms,
-        antonyms: targetItem.antonyms
+        antonyms: targetItem.antonyms,
+        isUserWord: !!targetItem.isCustomSearch
       };
 
       // 渲染題目標籤
       const typeBadge = document.getElementById('quiz-relation-type');
-      typeBadge.textContent = `請選出該詞的「${relationTypeStr}」`;
+      typeBadge.textContent = `${currentQuizData.isUserWord ? '⭐ 查過生字 • ' : ''}請選出該詞的「${relationTypeStr}」`;
       typeBadge.className = isAntonymTest
         ? 'inline-block px-3 py-1 bg-rose-50 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200'
         : 'inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-extrabold rounded-full border border-emerald-200';
@@ -1136,6 +1287,8 @@
       let filtered = vocabList;
       if (activeFilter === 'fav') {
         filtered = vocabList.filter(item => item.favorite);
+      } else if (activeFilter === 'searched') {
+        filtered = vocabList.filter(item => item.isCustomSearch);
       }
 
       countEl.textContent = `共 ${filtered.length} 個`;
@@ -1143,8 +1296,8 @@
       if (filtered.length === 0) {
         listEl.innerHTML = `
           <div class="bg-white rounded-xl p-8 border border-gray-100 text-center space-y-2">
-            <i class="ph-bold ph-star text-3xl text-gray-300"></i>
-            <p class="text-xs font-medium text-gray-400">目前沒有符合篩選的詞彙</p>
+            <i class="ph-bold ph-notebook text-3xl text-gray-300"></i>
+            <p class="text-xs font-medium text-gray-400">目前沒有此分類詞彙，試試在上方搜尋新單字或片語！</p>
           </div>
         `;
         return;
@@ -1159,6 +1312,7 @@
               <span class="font-bold text-sm text-gray-900">${item.word}</span>
               <span class="text-[10px] text-gray-400 font-mono">${item.phonetic}</span>
               ${item.favorite ? '<i class="ph-fill ph-star text-amber-400 text-xs"></i>' : ''}
+              ${item.isCustomSearch ? '<span class="text-[9px] px-1 py-0.2 bg-blue-50 text-iosBlue rounded font-semibold border border-blue-100">查過</span>' : ''}
             </div>
             <p class="text-xs text-gray-600 font-medium">${item.chineseMeaning}</p>
             <p class="text-[11px] text-iosOrange font-semibold">口訣：${item.cantoneseMnemonic.pun}</p>
@@ -1183,6 +1337,7 @@
         favBtn.onclick = (e) => {
           e.stopPropagation();
           item.favorite = !item.favorite;
+          updateWordFavoriteInCloud(item);
           renderWordbookList();
           if (currentWordItem.id === item.id) {
             renderVocabCard(item);
@@ -1252,6 +1407,7 @@
       const bookmarkBtn = document.getElementById('bookmark-btn');
       bookmarkBtn.addEventListener('click', () => {
         currentWordItem.favorite = !currentWordItem.favorite;
+        updateWordFavoriteInCloud(currentWordItem);
         renderVocabCard(currentWordItem);
         renderWordbookList();
         showToast(currentWordItem.favorite ? "已加入精選生字簿 ⭐" : "已從精選移除");
@@ -1263,17 +1419,38 @@
       });
 
       // 生字庫篩選按鈕
-      document.getElementById('filter-all-btn').addEventListener('click', (e) => {
+      const filterAllBtn = document.getElementById('filter-all-btn');
+      const filterFavBtn = document.getElementById('filter-fav-btn');
+      const filterSearchedBtn = document.getElementById('filter-searched-btn');
+
+      function updateFilterBtnStyles() {
+        [filterAllBtn, filterFavBtn, filterSearchedBtn].forEach(b => {
+          b.className = "px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50";
+        });
+        if (activeFilter === 'all') {
+          filterAllBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+        } else if (activeFilter === 'fav') {
+          filterFavBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+        } else if (activeFilter === 'searched') {
+          filterSearchedBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+        }
+      }
+
+      filterAllBtn.addEventListener('click', () => {
         activeFilter = 'all';
-        e.target.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
-        document.getElementById('filter-fav-btn').className = "px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50";
+        updateFilterBtnStyles();
         renderWordbookList();
       });
 
-      document.getElementById('filter-fav-btn').addEventListener('click', (e) => {
+      filterFavBtn.addEventListener('click', () => {
         activeFilter = 'fav';
-        e.target.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
-        document.getElementById('filter-all-btn').className = "px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50";
+        updateFilterBtnStyles();
+        renderWordbookList();
+      });
+
+      filterSearchedBtn.addEventListener('click', () => {
+        activeFilter = 'searched';
+        updateFilterBtnStyles();
         renderWordbookList();
       });
 
@@ -1327,10 +1504,11 @@
         };
 
         vocabList.unshift(newVocab);
+        saveWordToCloud(newVocab);
         renderWordbookList();
         renderVocabCard(newVocab);
         modal.classList.add('hidden');
-        showToast(`已成功加入「${word}」！`);
+        showToast(`已成功加入並雲端記憶「${word}」！`);
 
         document.getElementById('input-new-word').value = '';
         document.getElementById('input-new-meaning').value = '';
@@ -1338,6 +1516,10 @@
         document.getElementById('input-new-syn').value = '';
         document.getElementById('input-new-ant').value = '';
       });
+
+      renderVocabCard(vocabList[0]);
+      renderWordbookList();
+      initCloudStorage();
     });
   </script>
 </body>
