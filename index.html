@@ -451,6 +451,23 @@
           <textarea id="custom-fb-config" rows="3" placeholder='{"apiKey":"AIzaSy...","authDomain":"caneng-a8157.firebaseapp.com","projectId":"caneng-a8157","databaseURL":"https://caneng-a8157-default-rtdb.firebaseio.com"}' class="w-full px-2.5 py-2 border rounded-xl font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-iosBlue hide-scrollbar"></textarea>
         </div>
 
+        <!-- 診斷與安全規則指引卡片 -->
+        <div id="rtdb-diagnostic-box" class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] space-y-1.5">
+          <div class="flex items-center justify-between font-bold text-amber-950">
+            <span class="flex items-center space-x-1">
+              <i class="ph-bold ph-shield-warning text-amber-700"></i>
+              <span>若同步失敗：請檢查 Firebase 規則</span>
+            </span>
+            <button id="copy-rules-btn" class="px-2 py-0.5 bg-amber-200/80 hover:bg-amber-300 rounded text-[10px] font-bold text-amber-900 transition active:scale-95">
+              複製開放規則
+            </button>
+          </div>
+          <p class="leading-relaxed">
+            若測試出現 <strong>401 Permission Denied</strong>，請前往 <a href="https://console.firebase.google.com/" target="_blank" class="underline font-bold text-iosBlue">Firebase Console</a> ➜ 選擇 <strong>caneng-a8157</strong> ➜ <strong>Realtime Database</strong> ➜ <strong>Rules</strong>，貼上開放規則並點擊「發布」。
+          </p>
+          <pre class="bg-amber-100/70 p-1.5 rounded font-mono text-[10px] text-amber-950 overflow-x-auto select-all">{"rules": {".read": true, ".write": true}}</pre>
+        </div>
+
         <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200/70 text-emerald-900 text-[11px] leading-relaxed">
           <div class="flex items-center space-x-1 font-bold text-emerald-950 mb-0.5">
             <i class="ph-bold ph-database text-xs text-emerald-700"></i>
@@ -727,24 +744,38 @@
         }
       } else {
         dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
-        label.textContent = text || "本機/離線模式";
+        label.textContent = text || "未連線或拒絕存取";
         if (modalBadge) {
           modalBadge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800";
-          modalBadge.textContent = "本機快取中";
+          modalBadge.textContent = "需檢查 Rules 規則";
         }
       }
     }
 
-    // 儲存至 caneng-a8157 Realtime Database (REST API)
+    // 取得當前使用者的 ID Token 參數（若有登入）
+    async function getAuthTokenParam() {
+      if (auth && auth.currentUser) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          if (token) return `?auth=${token}`;
+        } catch (e) {
+          console.warn("無法取得 ID Token:", e);
+        }
+      }
+      return "";
+    }
+
+    // 儲存至 caneng-a8157 Realtime Database (含精準 HTTP 檢測與 Token 附加)
     async function saveWordToRTDB(item) {
-      if (!TARGET_RTDB_URL) return;
+      if (!TARGET_RTDB_URL) return { success: false, error: "未設定目標網址" };
       try {
         const uId = userId || 'shared_user';
         const cleanId = (item.id || 'w_' + Date.now()).replace(/[.$#[\]/]/g, '_');
+        const authParam = await getAuthTokenParam();
         
-        // 寫入使用者專屬節點與主資料庫節點
-        const endpoint = `${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}.json`;
-        await fetch(endpoint, {
+        // 寫入使用者專屬節點
+        const endpoint = `${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}.json${authParam}`;
+        const res = await fetch(endpoint, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -753,8 +784,15 @@
           })
         });
 
-        // 同步寫入主詞庫備份
-        fetch(`${TARGET_RTDB_URL}/vocabularies/${cleanId}.json`, {
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error(`RTDB 寫入拒絕 [HTTP ${res.status}]:`, errText);
+          return { success: false, status: res.status, error: errText };
+        }
+
+        // 同步寫入主詞庫備份（若規則允許）
+        const backupEndpoint = `${TARGET_RTDB_URL}/vocabularies/${cleanId}.json${authParam}`;
+        fetch(backupEndpoint, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -763,8 +801,10 @@
           })
         }).catch(() => {});
 
+        return { success: true };
       } catch (err) {
-        console.warn("RTDB 寫入略過（可能需要開通規則或已轉由 Firestore 同步）:", err);
+        console.error("RTDB 網絡失敗:", err);
+        return { success: false, error: err.message || "網絡無法連線" };
       }
     }
 
@@ -775,8 +815,9 @@
         const uId = userId || 'shared_user';
         const cleanId = (item.id || '').replace(/[.$#[\]/]/g, '_');
         if (!cleanId) return;
+        const authParam = await getAuthTokenParam();
 
-        await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}/favorite.json`, {
+        await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}/favorite.json${authParam}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(item.favorite)
@@ -791,20 +832,19 @@
       if (!TARGET_RTDB_URL) return [];
       try {
         const uId = userId || 'shared_user';
-        let res = await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies.json`);
-        let data = await res.json();
-        
-        // 若該使用者無資料，嘗試從全局詞庫讀取
-        if (!data || Object.keys(data).length === 0) {
-          res = await fetch(`${TARGET_RTDB_URL}/vocabularies.json`);
-          data = await res.json();
+        const authParam = await getAuthTokenParam();
+        let res = await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies.json${authParam}`);
+        if (!res.ok) {
+          res = await fetch(`${TARGET_RTDB_URL}/vocabularies.json${authParam}`);
         }
+        if (!res.ok) return [];
 
+        const data = await res.json();
         if (data && typeof data === 'object') {
           return Object.values(data).filter(item => item && item.word);
         }
       } catch (e) {
-        console.warn("無法從 RTDB 讀取，使用本地與 Firestore 快取:", e);
+        console.warn("無法從 RTDB 讀取，使用本地快取:", e);
       }
       return [];
     }
@@ -1666,20 +1706,43 @@
         showToast("已成功複製完整 User ID！");
       });
 
+      // 複製開放 Rules 規則
+      const copyRulesBtn = document.getElementById('copy-rules-btn');
+      if (copyRulesBtn) {
+        copyRulesBtn.addEventListener('click', () => {
+          const rules = '{\n  "rules": {\n    ".read": true,\n    ".write": true\n  }\n}';
+          const ta = document.createElement('textarea');
+          ta.value = rules;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast("已複製 Firebase 開放 Rules 規則！");
+        });
+      }
+
       // 測試連線與同步至 caneng-a8157
       document.getElementById('test-rtdb-btn').addEventListener('click', async () => {
         showToast("正在驗證 caneng-a8157 連線...");
-        try {
-          const testWord = {
-            id: 'ping_test',
-            word: 'test_connection',
-            status: 'online',
-            timestamp: Date.now()
-          };
-          await saveWordToRTDB(testWord);
+        const testWord = {
+          id: 'ping_test',
+          word: 'test_connection',
+          status: 'online',
+          timestamp: Date.now()
+        };
+        const res = await saveWordToRTDB(testWord);
+        if (res.success) {
           showToast("已成功連線並寫入 caneng-a8157 RTDB！✅");
-        } catch (e) {
-          showToast("連線測試完成！");
+          updateSyncIndicator('synced', '已成功連線 caneng-a8157');
+        } else {
+          console.error("RTDB 同步失敗詳情:", res);
+          if (res.status === 401) {
+            showToast("❌ 401 拒絕存取：請到 Firebase Console 開放 Realtime Database Rules！");
+            updateSyncIndicator('offline', '規則拒絕 (401)');
+          } else {
+            showToast(`❌ 同步失敗: ${res.error || res.status}`);
+            updateSyncIndicator('offline', '連線失敗');
+          }
         }
       });
 
