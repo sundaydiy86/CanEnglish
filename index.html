@@ -3,54 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>粵音英聯 - 廣東話口訣與延伸記憶英文字典</title>
+
+  <!-- iOS Web App Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="粵音英聯">
   <meta name="theme-color" content="#F2F2F7">
-  <title>粵音英聯 | 廣東話延伸記憶字典 (7日自動清理)</title>
-  
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
             iosBlue: '#007AFF',
-            iosBlueLight: '#E8F2FF',
-            iosGreen: '#34C759',
             iosOrange: '#FF9500',
-            iosOrangeLight: '#FFF4E5',
-            iosRed: '#FF3B30',
             iosPurple: '#AF52DE',
+            iosGreen: '#34C759',
+            iosRed: '#FF3B30',
             iosBg: '#F2F2F7',
             iosCard: '#FFFFFF',
-            iosMuted: '#8E8E93',
           },
-          fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', '"PingFang HK"', '"Noto Sans HK"', 'sans-serif'],
+          boxShadow: {
+            'ios': '0 2px 14px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03)',
+            'ios-lg': '0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04)',
           }
         }
       }
     }
   </script>
-  
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
-    body {
+    * {
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      touch-action: manipulation;
+      box-sizing: border-box;
     }
-    input, textarea {
-      user-select: text;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background-color: #F2F2F7;
+      color: #1C1C1E;
+      overscroll-behavior-y: none;
     }
-    .safe-top {
-      padding-top: max(env(safe-area-inset-top), 14px);
-    }
-    .safe-bottom {
-      padding-bottom: max(env(safe-area-inset-bottom), 18px);
+    .ios-glass {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
     .hide-scrollbar::-webkit-scrollbar {
       display: none;
@@ -59,52 +66,60 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    .ios-glass {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+    .safe-top {
+      padding-top: max(env(safe-area-inset-top), 0.6rem);
     }
-    .ios-card-shadow {
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    .safe-bottom {
+      padding-bottom: max(env(safe-area-inset-bottom), 0.6rem);
+    }
+    .card-transition {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s infinite ease-in-out;
     }
   </style>
 </head>
-
-<body class="bg-iosBg text-[#1C1C1E] font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-iosBlue/20">
+<body class="flex flex-col min-h-screen bg-[#F2F2F7] antialiased select-none">
 
   <!-- Header -->
   <header class="sticky top-0 z-40 ios-glass border-b border-gray-200/70 safe-top">
     <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-iosBlue via-blue-500 to-indigo-500 flex items-center justify-center text-white shadow-sm">
-          <i class="ph-bold ph-translate text-base"></i>
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-iosBlue via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-sm ring-1 ring-blue-500/20">
+          <i class="ph-bold ph-translate text-lg"></i>
         </div>
         <div>
           <div class="flex items-center space-x-1.5">
-            <h1 class="text-base font-bold text-gray-900 tracking-tight leading-none">粵音英聯</h1>
-            <span class="text-[10px] px-1.5 py-0.5 bg-blue-100/70 text-iosBlue rounded font-semibold tracking-wide">7日記憶週期</span>
+            <h1 class="text-base font-extrabold text-gray-950 tracking-tight leading-none">粵音英聯</h1>
+            <span class="text-[10px] px-1.5 py-0.5 bg-blue-100/70 text-iosBlue rounded font-bold tracking-wide">7日記憶週期</span>
           </div>
-          <p class="text-[11px] text-gray-500 font-medium">母語諧音 • 時事例句 • 延伸記憶法</p>
+          <p class="text-[11px] text-gray-500 font-medium">真實中文釋義 • 廣東話口訣 • 延伸對比</p>
         </div>
       </div>
       
-      <div class="flex items-center space-x-1.5">
-        <button id="ai-status-indicator" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center space-x-1 shadow-2xs" title="點擊檢視雲端清理狀態">
-          <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      <div class="flex items-center space-x-2">
+        <button id="ai-status-indicator" class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-bold flex items-center space-x-1.5 shadow-xs active:scale-95 transition" title="點擊檢視 7 日輪替狀態">
+          <span id="sync-dot" class="w-2 h-2 rounded-full bg-emerald-500 shadow-xs"></span>
           <span id="sync-status-text">7日自動清理</span>
         </button>
-        <button id="add-word-btn" title="手動收錄新詞" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition active:scale-90 shadow-2xs">
+        <button id="add-word-btn" title="手動收錄新詞" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 text-gray-700 flex items-center justify-center transition active:scale-90 border border-gray-200/80 shadow-xs">
           <i class="ph-bold ph-plus text-base"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="flex-1 max-w-md w-full mx-auto pb-24 overflow-y-auto px-4 pt-3 hide-scrollbar">
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-md w-full mx-auto pb-24 overflow-y-auto px-4 pt-3.5 hide-scrollbar">
 
     <!-- TAB 1: 查字典與記憶卡片 (Dictionary Tab) -->
     <section id="tab-dictionary" class="space-y-4">
+      
       <!-- Search Bar -->
       <div class="space-y-2">
         <div class="relative flex items-center">
@@ -112,13 +127,13 @@
           <input 
             id="search-input" 
             type="search" 
-            placeholder="搜尋單字、片語（例：reluctant 或 call it a day）" 
-            class="w-full pl-10 pr-24 py-2.5 bg-white text-sm rounded-xl border border-gray-200/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-iosBlue/40 focus:border-iosBlue transition placeholder:text-gray-400"
+            placeholder="搜尋任何英文單字或片語（例：ubiquitous、call it a day）" 
+            class="w-full pl-10 pr-24 py-3 bg-white text-sm font-medium rounded-2xl border border-gray-200/90 shadow-xs focus:outline-none focus:ring-2 focus:ring-iosBlue/40 focus:border-iosBlue transition placeholder:text-gray-400 text-gray-900"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
           >
-          <button id="search-action-btn" class="absolute right-1.5 px-3 py-1.5 bg-iosBlue text-white text-xs font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition flex items-center space-x-1 shadow-sm">
+          <button id="search-action-btn" class="absolute right-1.5 px-3.5 py-1.5 bg-iosBlue text-white text-xs font-bold rounded-xl hover:bg-blue-600 active:scale-95 transition flex items-center space-x-1 shadow-sm">
             <span>查詢</span>
             <i class="ph-bold ph-sparkle text-[11px]"></i>
           </button>
@@ -126,119 +141,118 @@
 
         <!-- Quick Chips Bar -->
         <div class="flex items-center space-x-1.5 overflow-x-auto py-1 hide-scrollbar text-xs">
-          <span class="text-gray-400 font-medium text-[11px] whitespace-nowrap"><i class="ph-bold ph-fire text-amber-500 mr-0.5"></i>熱門點查：</span>
-          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-medium shadow-2xs">reluctant</button>
-          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-medium shadow-2xs">call it a day</button>
-          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-medium shadow-2xs">meticulous</button>
-          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-medium shadow-2xs">bite the bullet</button>
-          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-medium shadow-2xs">serendipity</button>
+          <span class="text-gray-400 font-bold text-[11px] whitespace-nowrap flex items-center">
+            <i class="ph-fill ph-fire text-amber-500 mr-0.5"></i>推薦熱詞：
+          </span>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">ubiquitous</button>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">procrastinate</button>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">reluctant</button>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">call it a day</button>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">resilient</button>
+          <button class="chip-btn px-2.5 py-1 bg-white border border-gray-200/90 rounded-full text-gray-700 whitespace-nowrap active:bg-gray-100 font-semibold shadow-xs">bite the bullet</button>
         </div>
       </div>
 
       <!-- Multi-word Breakdown Panel -->
-      <div id="multi-word-breakdown-panel" class="hidden bg-white rounded-2xl p-4 border border-blue-100/90 ios-card-shadow space-y-2.5 transition-all">
+      <div id="multi-word-breakdown-panel" class="hidden bg-white rounded-2xl p-4 border border-blue-100 shadow-ios space-y-2.5 card-transition">
         <div class="flex items-center justify-between border-b border-gray-100 pb-2">
           <div class="flex items-center space-x-1.5 text-iosBlue text-xs font-bold">
             <i class="ph-bold ph-list-checks text-sm"></i>
-            <span>多詞分別解析與最相關中文意思</span>
+            <span>多詞分別解析與真實中文意思</span>
           </div>
-          <span id="multi-word-count" class="text-[10px] bg-blue-50 text-iosBlue px-2 py-0.5 rounded-full font-semibold border border-blue-100">共 0 個單字</span>
+          <span id="multi-word-count" class="text-[10px] bg-blue-50 text-iosBlue px-2 py-0.5 rounded-full font-bold border border-blue-100">共 0 個單字</span>
         </div>
-        <p class="text-[11px] text-gray-500 leading-tight">已為你獨立列出各英文字的最精準相關意思，點擊單字可直接展開其廣東話諧音卡：</p>
+        <p class="text-[11px] text-gray-500 leading-tight">已為你拆解並列出各英文字的最相關中文意思，點擊可直接切換其完整記憶卡：</p>
         <div id="multi-word-items-list" class="space-y-2 pt-1"></div>
       </div>
 
       <!-- Loading State Indicator -->
-      <div id="loading-state" class="hidden bg-white rounded-2xl p-8 border border-gray-100 text-center space-y-3 ios-card-shadow">
+      <div id="loading-state" class="hidden bg-white rounded-2xl p-8 border border-gray-100 text-center space-y-3 shadow-ios">
         <div class="w-10 h-10 border-3 border-iosBlue border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p class="text-sm font-semibold text-gray-800" id="loading-text">正在分析詞義及生成廣東話諧音口訣...</p>
-        <p class="text-xs text-gray-400">正在調用 Gemini 模型構建延伸語義網絡與時事新聞例句</p>
+        <p class="text-sm font-bold text-gray-800" id="loading-text">正在查詢真實中文釋義與生成廣東話口訣...</p>
+        <p class="text-xs text-gray-400">正在調用字典庫與語義數據網絡</p>
       </div>
 
       <!-- Empty State Card -->
-      <div id="vocab-empty-card" class="bg-white rounded-2xl p-7 border border-gray-100 ios-card-shadow text-center space-y-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-iosBlue flex items-center justify-center mx-auto text-2xl">
+      <div id="vocab-empty-card" class="bg-white rounded-2xl p-7 border border-gray-100 shadow-ios text-center space-y-3.5">
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 text-iosBlue flex items-center justify-center mx-auto text-2xl shadow-inner">
           <i class="ph-bold ph-magnifying-glass"></i>
         </div>
-        <div class="space-y-1">
+        <div class="space-y-1.5">
           <h3 class="font-extrabold text-base text-gray-900">準備好開始查字！</h3>
           <p class="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-            在上方搜尋列輸入任何英文單字或片語（例如點擊上方 <span class="font-bold text-iosBlue">reluctant</span> 或 <span class="font-bold text-iosBlue">call it a day</span>），系統會即時為你生成廣東話諧音卡！
+            輸入任何英文單字或片語（例如 <span class="font-bold text-iosBlue">ubiquitous</span>、<span class="font-bold text-iosBlue">call it a day</span>），系統均能查出真實中文意思、廣東話諧音口訣與時事例句！
           </p>
           <div class="pt-2">
-            <span class="inline-flex items-center space-x-1 text-[11px] bg-amber-50 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200 font-medium">
+            <span class="inline-flex items-center space-x-1.5 text-[11px] bg-amber-50 text-amber-800 px-3 py-1 rounded-full border border-amber-200 font-semibold">
               <i class="ph-bold ph-clock-countdown text-amber-600"></i>
-              <span>所有查詢生字均享 7 天雲端記憶，過期自動清理</span>
+              <span>查過的新詞會自動累積，保留 7 天進行記憶複習</span>
             </span>
           </div>
-        </div>
-        <div class="pt-1">
-          <button id="quick-try-btn" class="px-4 py-2 bg-iosBlue text-white text-xs font-bold rounded-xl shadow-sm hover:bg-blue-600 active:scale-95 transition">
-            點擊即刻試查：reluctant
-          </button>
         </div>
       </div>
 
       <!-- Vocab Card -->
-      <article id="vocab-card" class="hidden bg-white rounded-2xl p-5 border border-gray-100 ios-card-shadow space-y-4 transition-all">
+      <article id="vocab-card" class="hidden bg-white rounded-3xl p-5 border border-gray-100 shadow-ios-lg space-y-4 card-transition">
+        
         <!-- Word Header -->
         <div class="flex items-start justify-between">
           <div class="space-y-1">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 flex-wrap gap-y-1">
               <h2 id="card-word" class="text-2xl sm:text-3xl font-black tracking-tight text-gray-950"></h2>
-              <span id="card-pos" class="text-[11px] font-semibold px-2 py-0.5 bg-blue-50 text-iosBlue rounded-md border border-blue-100"></span>
+              <span id="card-pos" class="text-[11px] font-bold px-2 py-0.5 bg-blue-50 text-iosBlue rounded-md border border-blue-100"></span>
             </div>
-            <div class="flex items-center space-x-2">
-              <span id="card-phonetic" class="text-sm font-mono text-gray-500"></span>
-              <button id="tts-word-btn" title="聽發音" class="w-7 h-7 rounded-full bg-blue-50 text-iosBlue hover:bg-iosBlue hover:text-white flex items-center justify-center transition active:scale-90 shadow-2xs">
+            <div class="flex items-center space-x-2 pt-0.5">
+              <span id="card-phonetic" class="text-sm font-mono text-gray-500 font-medium"></span>
+              <button id="tts-word-btn" title="聽發音" class="w-7 h-7 rounded-full bg-blue-50 text-iosBlue hover:bg-iosBlue hover:text-white flex items-center justify-center transition active:scale-90 shadow-xs">
                 <i class="ph-bold ph-speaker-simple-high text-xs"></i>
               </button>
-              <span id="card-expire-tag" class="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-medium flex items-center space-x-0.5">
-                <i class="ph-bold ph-hourglass-high"></i>
+              <span id="card-expire-tag" class="text-[10px] text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 font-bold flex items-center space-x-1">
+                <i class="ph-bold ph-hourglass-high text-amber-600"></i>
                 <span id="card-expire-text">剩餘 7 天</span>
               </span>
             </div>
           </div>
-          <button id="bookmark-btn" title="加入精選" class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90">
+          <button id="bookmark-btn" title="加入精選" class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90 border border-gray-100">
             <i class="ph-fill ph-bookmark-simple text-xl"></i>
           </button>
         </div>
 
         <!-- Chinese Meaning & Usage -->
-        <div class="bg-blue-50/70 rounded-xl p-3.5 border border-blue-100 space-y-1.5">
+        <div class="bg-blue-50/70 rounded-2xl p-4 border border-blue-100/80 space-y-1.5">
           <div class="flex items-center space-x-1.5 text-iosBlue text-xs font-bold uppercase tracking-wider">
-            <i class="ph-bold ph-book-open-text"></i>
-            <span>中文意思及用法</span>
+            <i class="ph-bold ph-book-open-text text-sm"></i>
+            <span>真實中文意思及語境用法</span>
           </div>
-          <p id="card-meaning" class="text-lg font-extrabold text-gray-900 leading-snug"></p>
+          <p id="card-meaning" class="text-lg font-extrabold text-gray-950 leading-snug"></p>
           <p id="card-usage" class="text-xs text-gray-700 leading-relaxed font-normal"></p>
         </div>
 
         <!-- Breakdown Box -->
-        <div id="card-breakdown-box" class="hidden bg-slate-50/90 rounded-xl p-3.5 border border-slate-200/90 space-y-2">
+        <div id="card-breakdown-box" class="hidden bg-slate-50/90 rounded-2xl p-3.5 border border-slate-200/90 space-y-2">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-1.5 text-slate-800 text-xs font-bold uppercase tracking-wider">
               <i class="ph-bold ph-brackets-curly text-iosBlue"></i>
-              <span>各英文字分別意思（最相關對照）</span>
+              <span>各單字分別意思（最相關對照）</span>
             </div>
-            <span class="text-[10px] text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 font-medium">單字拆解</span>
+            <span class="text-[10px] text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200 font-semibold">單字拆解</span>
           </div>
           <div id="card-breakdown-container" class="space-y-1.5"></div>
         </div>
 
         <!-- Cantonese Homophone Mnemonic -->
-        <div class="bg-amber-50/90 rounded-xl p-3.5 border border-amber-200/90 space-y-2.5 relative overflow-hidden">
+        <div class="bg-amber-50/90 rounded-2xl p-4 border border-amber-200/90 space-y-2.5 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-1.5 text-iosOrange text-xs font-bold uppercase tracking-wider">
-              <i class="ph-bold ph-lightbulb"></i>
+              <i class="ph-bold ph-lightbulb text-sm"></i>
               <span>廣東話諧音記憶法</span>
             </div>
-            <span class="text-[10px] text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded font-semibold">母語聯想</span>
+            <span class="text-[10px] text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded font-bold">母語聯想</span>
           </div>
 
           <div class="flex items-baseline space-x-2">
             <span class="text-xs text-gray-500 whitespace-nowrap">口訣諧音：</span>
-            <span id="card-cantonese-pun" class="text-sm font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded tracking-wide shadow-2xs"></span>
+            <span id="card-cantonese-pun" class="text-sm font-black text-amber-950 bg-amber-200/80 px-2.5 py-0.5 rounded-lg tracking-wide shadow-xs"></span>
           </div>
 
           <p id="card-cantonese-story" class="text-xs text-amber-950 leading-relaxed font-medium"></p>
@@ -255,26 +269,26 @@
         <!-- Real-world News Sentences -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center space-x-1">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
               <i class="ph-bold ph-newspaper text-iosBlue text-sm"></i>
-              <span>最新時事與新聞例句（點擊聽讀）</span>
+              <span>最新時事與實用例句（點擊聽讀）</span>
             </span>
-            <span class="text-[10px] text-gray-400 font-medium">外媒權威語境</span>
+            <span class="text-[10px] text-gray-400 font-semibold">權威語境</span>
           </div>
           <div id="card-examples-container" class="space-y-2"></div>
         </div>
 
         <!-- Semantic Network: Synonyms & Antonyms -->
-        <div class="space-y-2 pt-1 border-t border-gray-100">
+        <div class="space-y-2 pt-2 border-t border-gray-100">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center space-x-1">
-              <i class="ph-bold ph-tree-structure text-iosBlue"></i>
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <i class="ph-bold ph-tree-structure text-iosBlue text-sm"></i>
               <span>延伸詞彙網絡（點擊即查）</span>
             </span>
-            <span class="text-[10px] text-gray-400">建立語義連結</span>
+            <span class="text-[10px] text-gray-400 font-medium">建立對比連結</span>
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-2 pt-1">
             <!-- Synonyms -->
             <div class="flex items-start space-x-2">
               <span class="text-[11px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200 whitespace-nowrap mt-0.5">同義</span>
@@ -293,25 +307,25 @@
 
     <!-- TAB 2: 延伸記憶法複習視圖 (Associative Memory Quiz) -->
     <section id="tab-review" class="hidden space-y-4">
-      <div id="quiz-empty-box" class="bg-white rounded-2xl p-8 border border-gray-100 ios-card-shadow text-center space-y-3">
-        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-iosPurple flex items-center justify-center mx-auto text-2xl">
+      <div id="quiz-empty-box" class="bg-white rounded-3xl p-8 border border-gray-100 shadow-ios text-center space-y-3">
+        <div class="w-14 h-14 rounded-2xl bg-purple-50 text-iosPurple flex items-center justify-center mx-auto text-2xl shadow-inner">
           <i class="ph-bold ph-brain"></i>
         </div>
         <h3 class="font-extrabold text-base text-gray-900">生字庫暫無單字可供複習</h3>
         <p class="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-          請先在「查單字」搜尋任何單字或片語（例如點擊上方推薦字），系統會為你自動收錄並保留 7 天進行延伸記憶複習！
+          請先在「查單字」搜尋任何單字或點擊上方推薦熱詞，系統會為你自動收錄並保留 7 天進行延伸記憶複習！
         </p>
       </div>
 
       <div id="quiz-active-box" class="hidden space-y-4">
         <!-- Quiz Progress Header -->
-        <div class="bg-white rounded-2xl p-4 border border-gray-100 ios-card-shadow flex items-center justify-between">
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-ios flex items-center justify-between">
           <div class="space-y-0.5">
             <span class="text-[10px] font-bold uppercase tracking-wider text-iosPurple">延伸對比複習法</span>
-            <h3 class="text-sm font-extrabold text-gray-900">透過同義 / 反義辨析詞義</h3>
+            <h3 class="text-sm font-extrabold text-gray-950">透過同義 / 反義辨析詞義</h3>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="flex items-center space-x-1 bg-amber-50 text-amber-600 px-2 py-1 rounded-full text-xs font-bold border border-amber-200">
+            <div class="flex items-center space-x-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-xs font-bold border border-amber-200">
               <i class="ph-fill ph-fire text-amber-500"></i>
               <span id="quiz-streak">0 連勝</span>
             </div>
@@ -322,12 +336,12 @@
         </div>
 
         <!-- Quiz Interactive Card -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 ios-card-shadow space-y-5">
+        <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-ios-lg space-y-5">
           <div class="text-center space-y-1.5">
             <span id="quiz-relation-type" class="inline-block px-3 py-1 bg-rose-50 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200">
               請選出該詞的「反義詞 (Antonym)」
             </span>
-            <h2 id="quiz-target-word" class="text-3xl font-black text-gray-900 tracking-tight pt-1"></h2>
+            <h2 id="quiz-target-word" class="text-3xl font-black text-gray-950 tracking-tight pt-1"></h2>
             <p id="quiz-word-hint" class="text-xs text-gray-400 font-medium"></p>
           </div>
 
@@ -337,11 +351,11 @@
           <div id="quiz-options-container" class="space-y-2.5"></div>
 
           <!-- Explanation Feedback Box -->
-          <div id="quiz-feedback-box" class="hidden rounded-xl p-4 transition-all space-y-2">
+          <div id="quiz-feedback-box" class="hidden rounded-2xl p-4 transition-all space-y-2">
             <div class="flex items-center space-x-2 font-bold text-sm" id="feedback-title"></div>
             <p id="feedback-detail" class="text-xs leading-relaxed"></p>
             <div class="pt-2">
-              <button id="quiz-next-btn" class="w-full py-2.5 bg-iosBlue text-white text-xs font-bold rounded-xl shadow-sm hover:bg-blue-600 active:scale-95 transition flex items-center justify-center space-x-1">
+              <button id="quiz-next-btn" class="w-full py-3 bg-iosBlue text-white text-xs font-bold rounded-xl shadow-sm hover:bg-blue-600 active:scale-95 transition flex items-center justify-center space-x-1.5">
                 <span>下一題延伸複習</span>
                 <i class="ph-bold ph-arrow-right text-xs"></i>
               </button>
@@ -356,14 +370,14 @@
       <div class="flex items-center justify-between px-1">
         <div>
           <div class="flex items-center space-x-1.5">
-            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">我的生字庫</span>
-            <span class="text-[10px] bg-amber-100 text-amber-800 font-semibold px-1.5 py-0.2 rounded border border-amber-200">7天自動過期</span>
+            <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">我的生字庫</span>
+            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded border border-amber-200">7天自動清理</span>
           </div>
-          <p class="text-[11px] text-gray-400">超過 7 天未溫習的生字會由 Firebase 自動清除</p>
+          <p class="text-[11px] text-gray-400">累積所有查過的生字，7 天後自動清理</p>
         </div>
         <div class="flex items-center space-x-1.5">
           <span id="wordbook-count" class="text-xs font-bold px-2 py-0.5 bg-blue-50 text-iosBlue rounded-full">共 0 個</span>
-          <button id="clear-all-words-btn" title="手動清空全部生字" class="px-2 py-0.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full text-[11px] font-semibold border border-rose-200 active:scale-95 transition flex items-center space-x-1">
+          <button id="clear-all-words-btn" title="手動清空全部生字" class="px-2.5 py-0.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-full text-[11px] font-bold border border-rose-200 active:scale-95 transition flex items-center space-x-1">
             <i class="ph-bold ph-trash text-xs"></i>
             <span>清空</span>
           </button>
@@ -372,131 +386,130 @@
 
       <!-- Quick Filter -->
       <div class="flex items-center space-x-1.5 text-xs pb-1">
-        <button id="filter-all-btn" class="px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs">全部詞彙</button>
-        <button id="filter-fav-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50">精選星標 ⭐</button>
-        <button id="filter-searched-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50">歷史查過 🔍</button>
+        <button id="filter-all-btn" class="px-3 py-1 bg-iosBlue text-white font-bold rounded-xl shadow-xs">全部詞彙</button>
+        <button id="filter-fav-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-xl active:bg-gray-50">精選星標 ⭐</button>
+        <button id="filter-searched-btn" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-xl active:bg-gray-50">歷史查過 🔍</button>
       </div>
 
-      <div id="wordbook-list" class="space-y-2"></div>
+      <div id="wordbook-list" class="space-y-2.5"></div>
     </section>
   </main>
 
   <!-- Modal: 手動加入新詞 (Add Word Modal) -->
-  <div id="add-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
+  <div id="add-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
       <div class="flex items-center justify-between border-b pb-2.5">
         <div class="flex items-center space-x-2">
           <i class="ph-bold ph-plus-circle text-iosBlue text-lg"></i>
-          <h3 class="font-bold text-sm text-gray-900">收錄新單字 / 片語</h3>
+          <h3 class="font-bold text-sm text-gray-950">收錄新單字 / 片語</h3>
         </div>
-        <button id="close-modal-btn" class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
+        <button id="close-modal-btn" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
           <i class="ph-bold ph-x text-xs"></i>
         </button>
       </div>
 
       <div class="space-y-2.5 text-xs max-h-[70vh] overflow-y-auto hide-scrollbar">
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">英文單字 / 片語 *</label>
+          <label class="block font-bold text-gray-700 mb-1">英文單字 / 片語 *</label>
           <input id="input-new-word" type="text" placeholder="例：serendipity 或 call it a day" class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">中文意思 *</label>
+          <label class="block font-bold text-gray-700 mb-1">中文意思 *</label>
           <input id="input-new-meaning" type="text" placeholder="例：不期而遇的美好緣分" class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">廣東話諧音口訣</label>
+          <label class="block font-bold text-gray-700 mb-1">廣東話諧音口訣</label>
           <input id="input-new-pun" type="text" placeholder="例：「死忍得皮」" class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">同義詞（用逗號隔開）</label>
+          <label class="block font-bold text-gray-700 mb-1">同義詞（用逗號隔開）</label>
           <input id="input-new-syn" type="text" placeholder="例：fluke, chance, coincidence" class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
         <div>
-          <label class="block font-semibold text-gray-700 mb-1">反義詞（用逗號隔開）</label>
+          <label class="block font-bold text-gray-700 mb-1">反義詞（用逗號隔開）</label>
           <input id="input-new-ant" type="text" placeholder="例：misfortune, bad luck" class="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
       </div>
 
       <div class="pt-2 flex space-x-2">
-        <button id="cancel-add-btn" class="w-1/2 py-2 bg-gray-100 text-gray-700 rounded-xl font-semibold text-xs active:bg-gray-200">取消</button>
-        <button id="confirm-add-btn" class="w-1/2 py-2 bg-iosBlue text-white rounded-xl font-semibold text-xs active:bg-blue-600 shadow-2xs">儲存詞彙</button>
+        <button id="cancel-add-btn" class="w-1/2 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs active:bg-gray-200">取消</button>
+        <button id="confirm-add-btn" class="w-1/2 py-2.5 bg-iosBlue text-white rounded-xl font-bold text-xs active:bg-blue-600 shadow-xs">儲存詞彙</button>
       </div>
     </div>
   </div>
 
   <!-- Modal: 自訂 iOS 確認清空對話框 -->
-  <div id="confirm-dialog-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl space-y-3 border border-gray-100 text-center">
-      <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl">
+  <div id="confirm-dialog-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-3xl p-5 shadow-2xl space-y-3.5 border border-gray-100 text-center">
+      <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-2xl shadow-inner">
         <i class="ph-bold ph-warning"></i>
       </div>
-      <h4 class="font-extrabold text-sm text-gray-900">確認清空生字庫？</h4>
+      <h4 class="font-extrabold text-base text-gray-950">確認清空生字庫？</h4>
       <p class="text-xs text-gray-500 leading-relaxed">
-        此操作將會清空你目前收錄的所有單字與複習記錄。確定要繼續嗎？
+        此操作將會清空你目前累積收錄的所有單字與複習記錄。確定要繼續嗎？
       </p>
       <div class="pt-2 flex space-x-2">
-        <button id="dialog-cancel-btn" class="w-1/2 py-2 bg-gray-100 text-gray-700 rounded-xl font-semibold text-xs active:bg-gray-200">取消</button>
-        <button id="dialog-confirm-btn" class="w-1/2 py-2 bg-rose-600 text-white rounded-xl font-semibold text-xs active:bg-rose-700 shadow-2xs">確認清空</button>
+        <button id="dialog-cancel-btn" class="w-1/2 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs active:bg-gray-200">取消</button>
+        <button id="dialog-confirm-btn" class="w-1/2 py-2.5 bg-rose-600 text-white rounded-xl font-bold text-xs active:bg-rose-700 shadow-xs">確認清空</button>
       </div>
     </div>
   </div>
 
   <!-- Modal: 7 天生命週期與 Firebase 狀態 -->
-  <div id="cloud-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
+  <div id="cloud-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
       <div class="flex items-center justify-between border-b pb-2.5">
         <div class="flex items-center space-x-2">
           <i class="ph-bold ph-clock-countdown text-iosBlue text-lg"></i>
-          <h3 class="font-bold text-sm text-gray-900">7 日生命週期與雲端設定</h3>
+          <h3 class="font-bold text-sm text-gray-950">7 日生命週期與雲端設定</h3>
         </div>
-        <button id="close-cloud-modal-btn" class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
+        <button id="close-cloud-modal-btn" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
           <i class="ph-bold ph-x text-xs"></i>
         </button>
       </div>
 
       <div class="space-y-3 text-xs">
-        <!-- 7-Day TTL Policy Info Card -->
-        <div class="p-3 bg-amber-50/80 rounded-xl border border-amber-200/90 space-y-1.5">
-          <div class="flex items-center space-x-1.5 text-amber-900 font-bold">
+        <div class="p-3.5 bg-amber-50/90 rounded-2xl border border-amber-200/90 space-y-1.5">
+          <div class="flex items-center space-x-1.5 text-amber-950 font-bold">
             <i class="ph-bold ph-info text-amber-600 text-sm"></i>
             <span>7 日自動清理原則（TTL）</span>
           </div>
-          <p class="text-[11px] text-amber-800 leading-relaxed">
-            每個查過或手動加入的生字自儲存時刻起算，在 Firebase 資料庫中保留 <strong>7 天（168 小時）</strong>。
-            時間一到，系統會<strong>自動從 Firebase 永久抹除</strong>，協助你保持生字庫精簡！
+          <p class="text-[11px] text-amber-900 leading-relaxed font-medium">
+            每個查過或收錄的生字自儲存時刻起算，在資料庫中保留 <strong>7 天（168 小時）</strong>。
+            時間一到，系統會<strong>自動永久抹除</strong>，協助你保持生字庫精準高效！
           </p>
         </div>
 
-        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5">
+        <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100 space-y-1.5">
           <div class="flex items-center justify-between">
-            <span class="text-gray-500 font-medium">資料庫狀態</span>
-            <span id="modal-conn-badge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">已啟用 7 日自動過期</span>
+            <span class="text-gray-500 font-semibold">資料庫狀態</span>
+            <span id="modal-conn-badge" class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">已啟用本地與雲端 7 日輪替</span>
           </div>
           <div class="space-y-1 pt-1 border-t border-gray-200/60">
             <span class="text-gray-500 font-medium block">雲端 Realtime Database:</span>
-            <div class="p-2 bg-blue-50/80 rounded-lg border border-blue-200/80 font-mono text-[10px] text-blue-900 break-all select-all">
+            <div class="p-2 bg-blue-50/80 rounded-xl border border-blue-200/80 font-mono text-[10px] text-blue-900 break-all select-all">
               https://caneng-a8157-default-rtdb.firebaseio.com/
             </div>
           </div>
         </div>
 
         <div class="space-y-1.5 pt-1 border-t border-gray-100">
-          <label class="block font-semibold text-gray-700 flex items-center justify-between">
+          <label class="block font-bold text-gray-700 flex items-center justify-between">
             <span>Gemini AI API Key (可選填)</span>
-            <span class="text-[10px] text-gray-400 font-normal">留空以內建智能字典生成</span>
+            <span class="text-[10px] text-emerald-600 font-semibold">免填亦支援全網真實中文翻譯</span>
           </label>
-          <input id="custom-gemini-key" type="password" placeholder="AIzaSy... (若在個人環境查詞可填)" class="w-full px-2.5 py-2 border rounded-xl font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-iosBlue">
+          <input id="custom-gemini-key" type="password" placeholder="AIzaSy... (若填寫將開啟深度 AI 生成)" class="w-full px-3 py-2 border rounded-xl font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-iosBlue">
         </div>
       </div>
 
       <div class="pt-1 flex space-x-2">
-        <button id="close-cloud-btn" class="w-full py-2 bg-iosBlue text-white rounded-xl font-semibold text-xs active:bg-blue-600">完成</button>
+        <button id="close-cloud-btn" class="w-full py-2.5 bg-iosBlue text-white rounded-xl font-bold text-xs active:bg-blue-600">完成</button>
       </div>
     </div>
   </div>
 
   <!-- Toast Notification Message Box -->
-  <div id="toast" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-3">
+  <div id="toast" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-3">
     提示訊息
   </div>
 
@@ -505,31 +518,50 @@
     <div class="max-w-md mx-auto grid grid-cols-3 h-14">
       <button id="tab-btn-dictionary" class="nav-tab-btn flex flex-col items-center justify-center text-iosBlue transition active:scale-95" data-tab="tab-dictionary">
         <i class="ph-bold ph-magnifying-glass text-xl"></i>
-        <span class="text-[10px] font-semibold mt-0.5">查單字</span>
+        <span class="text-[10px] font-bold mt-0.5">查單字</span>
       </button>
 
       <button id="tab-btn-review" class="nav-tab-btn flex flex-col items-center justify-center text-gray-400 transition active:scale-95" data-tab="tab-review">
         <i class="ph-bold ph-brain text-xl"></i>
-        <span class="text-[10px] font-semibold mt-0.5">延伸複習</span>
+        <span class="text-[10px] font-bold mt-0.5">延伸複習</span>
       </button>
 
       <button id="tab-btn-wordbook" class="nav-tab-btn flex flex-col items-center justify-center text-gray-400 transition active:scale-95" data-tab="tab-wordbook">
         <i class="ph-bold ph-notebook text-xl"></i>
-        <span class="text-[10px] font-semibold mt-0.5">生字庫</span>
+        <span class="text-[10px] font-bold mt-0.5">生字庫</span>
       </button>
     </div>
   </nav>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+  <script>
     // 7 天過期時間常數（毫秒）：7 日 * 24 小時 * 60 分鐘 * 60 秒 * 1000 毫秒
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    const LOCAL_STORAGE_KEY = "caneng_vocabularies_v2";
 
-    // 內建核心字典庫（作為基礎參考）
+    // 內建權威字典庫
     const masterDictionary = {
+      "span": {
+        word: "span",
+        phonetic: "/spæn/",
+        pos: "n. / v.",
+        chineseMeaning: "跨度、跨越、持續時間（涵蓋範疇）",
+        chineseUsage: "作名詞指「空間跨距」或「時間長度」（例如 attention span 專注力持續時間、life span 壽命）；作動詞指「橫跨空間」或「歷時長達某段時間」。",
+        breakdown: [
+          { word: "span", pos: "n.", meaning: "跨度、期間", explanation: "指空間上的兩端距離，或時間上的持續長度" },
+          { word: "span", pos: "v.", meaning: "橫跨、貫穿", explanation: "跨越某個地理界線或漫長時間歲月" }
+        ],
+        examples: [
+          { tag: "科技趨勢", en: "Short-form video apps have significantly reduced the average user's attention span.", zh: "短影音應用的普及大幅縮短了普通使用者的專注力持續時間。" },
+          { tag: "國際時事", en: "The diplomatic talks spanned over four decades, marking an unprecedented era of cooperation.", zh: "該項外交談判歷時橫跨超過四十載，開創了前所未有的合作時代。" }
+        ],
+        synonyms: ["extend across", "cover", "period", "range", "duration"],
+        antonyms: ["narrow", "compress", "limit", "shorten"],
+        cantoneseMnemonic: {
+          pun: "粵音：「西便（西邊）」",
+          story: "由東邊一直跨越到<strong>「西便（西邊）」</strong>，成座橋或者成段歷史<strong>「橫跨、延伸」</strong>咁長，跨度極廣！",
+          visualCue: "一條長長的宏偉吊橋，由東岸一直橫跨跨越到遙遠的西岸。"
+        }
+      },
       "reluctant": {
         word: "reluctant",
         phonetic: "/rɪˈlʌktənt/",
@@ -595,49 +627,159 @@
           visualCue: "放大鏡下，一份密密麻麻打滿綠色剔號的工程檢查清單。"
         }
       },
+      "ubiquitous": {
+        word: "ubiquitous",
+        phonetic: "/juːˈbɪkwɪtəs/",
+        pos: "adj.",
+        chineseMeaning: "無處不在的、普遍存在的",
+        chineseUsage: "形容某種科技、產品或現象極為普及，到處都能見到。常用於科技新聞與社會現象。",
+        breakdown: [
+          { word: "ubiquitous", pos: "adj.", meaning: "無處不在的", explanation: "廣泛存在於各處" }
+        ],
+        examples: [
+          { tag: "科技趨勢", en: "Smartphones and QR codes have become ubiquitous in daily life across Asia.", zh: "智慧型手機與二維條碼在亞洲的日常生活中已經變得無處不在。" },
+          { tag: "人工智慧", en: "AI algorithms are becoming ubiquitous in modern financial surveillance.", zh: "人工智慧演算法在現代金融監管中正變得無孔不入、普遍普及。" }
+        ],
+        synonyms: ["omnipresent", "pervasive", "universal", "everywhere"],
+        antonyms: ["rare", "scarce", "uncommon", "seldom"],
+        cantoneseMnemonic: {
+          pun: "粵音：「幼鼻骨突」",
+          story: "無論去到邊度，個個都整咗個<strong>「幼鼻骨突」</strong>嘅網紅鼻，周圍都係，真係<strong>無處不在</strong>！",
+          visualCue: "大街小巷上每個人臉上都頂著同款高聳鼻樑，滿街都是。"
+        }
+      },
+      "procrastinate": {
+        word: "procrastinate",
+        phonetic: "/prəˈkræstɪneɪt/",
+        pos: "v.",
+        chineseMeaning: "拖延、拖拉不決",
+        chineseUsage: "指明知某件事重要，卻因為懶惰或逃避心理而一直往後推延。",
+        breakdown: [
+          { word: "procrastinate", pos: "v.", meaning: "拖延、延宕", explanation: "推遲必須完成的任務" }
+        ],
+        examples: [
+          { tag: "生活心理", en: "Students tend to procrastinate when faced with daunting research papers.", zh: "面對繁重艱深的學術論文時，學生往往容易習慣性拖延。" },
+          { tag: "職場觀察", en: "Leaders cannot afford to procrastinate on critical restructuring decisions.", zh: "在關鍵的企業重組決策上，領導者絕不能猶豫拖延。" }
+        ],
+        synonyms: ["delay", "postpone", "defer", "put off"],
+        antonyms: ["expedite", "accelerate", "act promptly", "prioritize"],
+        cantoneseMnemonic: {
+          pun: "粵音：「破產時耐」",
+          story: "做嘢拖拖拉拉，<strong>拖到破產嗰時都未做得掂，仲好耐</strong>！",
+          visualCue: "堆滿成座山的文件旁邊，鬧鐘一直響，主角仲喺度煲劇打機。"
+        }
+      },
+      "resilient": {
+        word: "resilient",
+        phonetic: "/rɪˈzɪliənt/",
+        pos: "adj.",
+        chineseMeaning: "有適應力的、迅速復原的、堅韌的",
+        chineseUsage: "形容人、經濟體或供應鏈在遭受重創後具備極強的抗壓能力與彈性修復能力。",
+        breakdown: [
+          { word: "resilient", pos: "adj.", meaning: "堅韌的、具復原力的", explanation: "受壓後迅速復原" }
+        ],
+        examples: [
+          { tag: "環球財經", en: "The labor market remained remarkably resilient despite aggressive rate hikes.", zh: "儘管央行激進加息，就業市場依然展現出極強的抗壓與復原韌性。" },
+          { tag: "氣候環境", en: "Coastal cities are investing billions to build more resilient flood defenses.", zh: "沿海城市正斥資數十億美元，以建造更具抵禦洪災能力的韌性防線。" }
+        ],
+        synonyms: ["robust", "tough", "tenacious", "adaptable"],
+        antonyms: ["fragile", "vulnerable", "weak", "brittle"],
+        cantoneseMnemonic: {
+          pun: "粵音：「厘士年」",
+          story: "條<strong>「厘士（Lace）內衣着咗成百年」</strong>都扯唔爛，彈力十足，超級<strong>堅韌兼有彈性</strong>！",
+          visualCue: "一條點拉都拉唔斷、迅速回彈的超彈力金屬纖維布。"
+        }
+      },
       "bite the bullet": {
         word: "bite the bullet",
         phonetic: "/baɪt ðə ˈbʊlɪt/",
         pos: "idiom",
-        chineseMeaning: "咬緊牙關應對、硬著頭皮去做",
-        chineseUsage: "指明知過程痛苦難受，但因為不可避免而下定決心去面對。",
+        chineseMeaning: "咬緊牙關硬著頭皮做、忍痛面對",
+        chineseUsage: "常用於必須面對極艱難或痛苦的現實，下定決心咬牙挺過去。",
         breakdown: [
-          { word: "bite", pos: "v.", meaning: "咬住", explanation: "用牙齒咬緊" },
-          { word: "the bullet", pos: "n.", meaning: "子彈", explanation: "源自戰場無麻醉手術時士兵咬子彈止痛" }
+          { word: "bite", pos: "v.", meaning: "咬住", explanation: "用力咬緊" },
+          { word: "the bullet", pos: "n.", meaning: "子彈", explanation: "舊時戰場截肢咬子彈止痛" }
         ],
         examples: [
-          { tag: "財經焦點", en: "The startup had to bite the bullet and cut operational costs to survive.", zh: "該初創公司不得不咬緊牙關削減營運開支以求生存。" },
-          { tag: "環球政策", en: "Governments must bite the bullet on tax reforms despite political backlash.", zh: "儘管面臨政治阻力，政府仍必須硬著頭皮推行稅制改革。" }
+          { tag: "財經金融", en: "The government had to bite the bullet and raise tax rates to curb deficits.", zh: "政府不得不硬著頭皮咬緊牙關加稅，以遏制財政赤字。" },
+          { tag: "職場轉型", en: "Management finally bit the bullet and phased out legacy computer systems.", zh: "管理層終於下定決心忍痛淘汰舊式電腦系統。" }
         ],
-        synonyms: ["face the music", "brace oneself", "take the plunge"],
-        antonyms: ["evade", "shrink back", "dodge", "procrastinate"],
+        synonyms: ["face the music", "tough it out", "brave it out", "swallow the bitter pill"],
+        antonyms: ["shrink back", "back down", "evade", "dodge"],
         cantoneseMnemonic: {
-          pun: "粵音：「咬住個 Bullet」",
-          story: "無麻醉做手術，唯有<strong>咬實粒子彈硬挺</strong>忍痛挨過去！",
-          visualCue: "士兵咬住金屬子彈，緊握雙拳堅定忍耐的特寫。"
+          pun: "粵音：「白蹄播笠」",
+          story: "隻白蹄馬要<strong>咬住粒硬子彈（Bullet）忍痛向前衝</strong>，咬緊牙關硬著頭皮死頂！",
+          visualCue: "士兵戰場上嘴裡咬著子彈忍痛接受包紮，目光堅定。"
         }
       },
       "serendipity": {
         word: "serendipity",
         phonetic: "/ˌserənˈdɪpəti/",
         pos: "n.",
-        chineseMeaning: "意外收穫、不期而遇的驚喜良緣",
-        chineseUsage: "指在未特意尋求的情況下，偶然發現了珍貴或美好的事物。",
+        chineseMeaning: "不期而遇的美好機緣、意外收穫",
+        chineseUsage: "指在沒有刻意尋找的情況下，意外發現珍貴或美好事物的幸運機遇。",
         breakdown: [
-          { word: "serendipity", pos: "n.", meaning: "機緣巧合的福氣", explanation: "美好的偶然遇見" }
+          { word: "serendipity", pos: "n.", meaning: "意外美好機緣", explanation: "偶然而獲的幸運" }
         ],
         examples: [
-          { tag: "醫療前沿", en: "The breakthrough antibody was discovered through sheer scientific serendipity.", zh: "這款突破性抗體純粹是在科學研究中的一次偶然機緣下被發現的。" },
-          { tag: "天文探測", en: "Telescope calibration led to the serendipity of spotting a rare supernova.", zh: "望遠鏡在調校校準期間，意外驚喜地觀測到了一顆罕見的超新星。" }
+          { tag: "醫療科研", en: "Penicillin's discovery was a famous example of scientific serendipity.", zh: "盤尼西林的發現是科學史上最著名的偶然機緣典範之一。" },
+          { tag: "生活哲理", en: "Traveling without a strict schedule often leads to delightful serendipity.", zh: "不設定嚴格行程的旅行往往會帶來令人驚喜的美好緣分。" }
         ],
-        synonyms: ["fluke", "happy chance", "coincidence", "providence"],
-        antonyms: ["misfortune", "bad luck", "adversity"],
+        synonyms: ["fluke", "coincidence", "happy accident", "providence"],
+        antonyms: ["misfortune", "bad luck", "curse", "adversity"],
         cantoneseMnemonic: {
           pun: "粵音：「死忍得皮」",
-          story: "「死忍、忍到有得皮」，好似買平價盲盒，竟然開到極品限定版，真係<strong>意想不到嘅天賜良緣</strong>！",
-          visualCue: "轉角處意外拾到一本寫滿致富秘密的古老筆記本。"
+          story: "當你「死忍得皮」挨過難關之後，突然遇到<strong>不期而遇的好緣分與意外收穫</strong>！",
+          visualCue: "在昏暗舊書攤的角落偶然翻出一本失傳已久的傳世寶典。"
         }
       }
+    };
+
+    // 內建擴充常用詞庫
+    const commonVocabularyMap = {
+      "apple": { meaning: "蘋果", pos: "n.", pun: "「鴨煲」", story: "用「鴨煲」蘋果湯，清甜滋潤。" },
+      "book": { meaning: "書籍、預訂", pos: "n./v.", pun: "「卜」", story: "睇書聽到心跳卜卜聲，或者「卜位」預約。" },
+      "cat": { meaning: "貓", pos: "n.", pun: "「乞」", story: "隻貓乞討小魚乾。" },
+      "dog": { meaning: "狗", pos: "n.", pun: "「鐸」", story: "隻狗戴住個金鐸鈴鐺。" },
+      "happy": { meaning: "快樂的、幸福的", pos: "adj.", pun: "「蝦皮」", story: "食到香脆蝦皮，個人開心到笑。" },
+      "challenge": { meaning: "挑戰、質疑", pos: "n./v.", pun: "「扯鈴仔」", story: "玩扯鈴仔要好高難度，係一項大挑戰！" },
+      "important": { meaning: "重要的、重大的", pos: "adj.", pun: "「煙波頓」", story: "煙波之中行船一定要有指針，極之重要！" },
+      "economy": { meaning: "經濟、節約", pos: "n.", pun: "「衣架冧」", story: "經濟不景氣，連賣衣架都冧檔！" },
+      "hospital": { meaning: "醫院", pos: "n.", pun: "「喝死皮頭」", story: "入到醫院醫生大喝叫病人保養好死皮頭。" },
+      "money": { meaning: "金錢、貨幣", pos: "n.", pun: "「慢泥」", story: "數銀紙時慢慢泥（慢慢來），一毫子都唔准少！" },
+      "success": { meaning: "成功、成就", pos: "n.", pun: "「塞匙」", story: "終於搵啱門匙塞入去開鎖，順利成功！" },
+      "failure": { meaning: "失敗、不及格", pos: "n.", pun: "「飛籬」", story: "跨欄飛過竹籬笆時跌低咗，考試失敗。" },
+      "beautiful": { meaning: "美麗的、優雅的", pos: "adj.", pun: "「標題科」", story: "寫個標題都要靚，真係好美麗！" },
+      "difficult": { meaning: "困難的、艱鉅的", pos: "adj.", pun: "「滴水確」", story: "水滴石穿雖然困難，但持之以恆就做到！" },
+      "easy": { meaning: "容易的、輕鬆的", pos: "adj.", pun: "「意思」", story: "小意思啦，好容易搞掂！" },
+      "friend": { meaning: "朋友、夥伴", pos: "n.", pun: "「快點」", story: "朋友叫你「快點」一齊去飲茶食點心！" },
+      "family": { meaning: "家庭、家人", pos: "n.", pun: "「花尾厘」", story: "一家人住埋一齊，年尾買花過新年！" },
+      "abandon": { meaning: "放棄、拋棄", pos: "v.", pun: "「鴨扁燈」", story: "隻鴨踩扁咗盞燈，唯有忍痛放棄它！" },
+      "ambition": { meaning: "野心、雄心壯志", pos: "n.", pun: "「醃鼻神」", story: "為咗實現雄心野心，連醃鼻嘅苦藥都要忍！" },
+      "barrier": { meaning: "障礙物、隔閡", pos: "n.", pun: "「白厘阿」", story: "前面起咗一道白籬笆做障礙擋住路！" },
+      "candidate": { meaning: "候選人、應試者", pos: "n.", pun: "「肯遞嗲」", story: "候選人好肯遞名片兼向街坊嗲兩句拉票！" },
+      "diligent": { meaning: "勤奮的、用功的", pos: "adj.", pun: "「地厘針」", story: "好勤力咁趴喺地度用放大鏡同指南針做研究！" },
+      "eloquent": { meaning: "雄辯的、口才流利的", pos: "adj.", pun: "「愛撈官」", story: "口才好流利嘅人，最識愛撈官場上位！" },
+      "fragile": { meaning: "易碎的、脆弱的", pos: "adj.", pun: "「花椒」", story: "易碎玻璃樽入面裝滿花椒，千祈咪跌碎！" },
+      "gratitude": { meaning: "感激、感恩之情", pos: "n.", pun: "「架梯柱」", story: "有人幫手架起長梯頂住樑柱，心中充滿感激！" },
+      "hesitate": { meaning: "猶豫、躊躇", pos: "v.", pun: "「黑水踢」", story: "見到前面一潭黑水，猶豫緊踢唔踢落去好！" },
+      "innovation": { meaning: "創新、革新", pos: "n.", pun: "「煙路飛晨」", story: "創新嘅科技好似清晨煙路中飛出嚟嘅火箭！" },
+      "jealous": { meaning: "嫉妒的、吃醋的", pos: "adj.", pun: "「啫喱士」", story: "見人食靚啫喱，自己食唔到就好嫉妒吃醋！" },
+      "knowledge": { meaning: "知識、學問", pos: "n.", pun: "「落瀝」", story: "讀書讀到汗落瀝瀝，終於學到豐富知識！" },
+      "legacy": { meaning: "遺產、歷史遺留物", pos: "n.", pun: "「禮記」", story: "長輩喺老字號「禮記」留低落嚟嘅傳家遺產！" },
+      "negotiate": { meaning: "談判、協商", pos: "v.", pun: "「你哥射」", story: "叫你哥出面射住個場，大家坐低好好談判！" },
+      "optimistic": { meaning: "樂觀的", pos: "adj.", pun: "「阿伯甜食」", story: "樂觀嘅阿伯天天食甜品，凡事向好睇！" },
+      "patience": { meaning: "耐心、忍耐力", pos: "n.", pun: "「陪晨」", story: "有耐心嘅人由半夜陪到清晨都唔發脾氣！" },
+      "reliable": { meaning: "可靠的、可信賴的", pos: "adj.", pun: "「脷拉保」", story: "好可靠嘅朋友，拉住牛脷都幫你保證到底！" },
+      "span": { meaning: "跨度、跨越、持續期間", pos: "n./v.", pun: "「西便」", story: "由東邊一直跨越到「西便（西邊）」，成個時間跨度同長度都好廣闊！" },
+      "scope": { meaning: "範圍、眼界、餘地", pos: "n.", pun: "「四角」", story: "眼界要放開，睇清事物嘅四角邊界同範圍！" },
+      "extent": { meaning: "程度、範圍、限度", pos: "n.", pun: "「億士頓」", story: "影響程度之大，好似億噸重物壓落嚟！" },
+      "scale": { meaning: "規模、比例、天平", pos: "n./v.", pun: "「死橋」", story: "咁大規模嘅工程，千祈咪用死橋，要靈活稱重！" },
+      "duration": { meaning: "持續時間、期間", pos: "n.", pun: "「丟梨晨」", story: "由清晨一直持續到深夜，持續時間非常長！" },
+      "aspect": { meaning: "方面、層面、外貌", pos: "n.", pun: "「鴨士碧」", story: "從每個不同方面去觀察，都會有新發現！" },
+      "impact": { meaning: "衝擊、巨大影響", pos: "n./v.", pun: "「煙墨」", story: "好似濃煙落墨一樣，對成個局勢造成巨大衝擊！" },
+      "factor": { meaning: "因素、要素", pos: "n.", pun: "「廢花」", story: "唔好講咁多廢話，直接搵出關鍵影響因素！" },
+      "range": { meaning: "幅度、範圍、排列", pos: "n./v.", pun: "「連住」", story: "一系列連住嘅數字，形成廣闊嘅數據範圍！" }
     };
 
     // 全局狀態
@@ -649,10 +791,6 @@
     let activeFilter = 'all';
 
     const TARGET_RTDB_URL = "https://caneng-a8157-default-rtdb.firebaseio.com";
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'caneng-a8157';
-    let db = null;
-    let auth = null;
-    let currentUserId = null;
 
     // 計算剩餘天數文字
     function getRemainingDaysText(timestamp) {
@@ -674,19 +812,19 @@
       const label = document.getElementById('sync-status-text');
       if (!dot || !label) return;
       if (status === 'synced') {
-        dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-xs";
         label.textContent = text || `已累積 ${vocabList.length} 詞 (7日輪替)`;
       } else if (status === 'syncing') {
-        dot.className = "w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping";
+        dot.className = "w-2 h-2 rounded-full bg-blue-500 animate-ping";
         label.textContent = text || "正在同步並清理過期詞";
       } else {
-        dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-xs";
         label.textContent = text || (vocabList.length > 0 ? `已累積 ${vocabList.length} 詞` : "7日自動清理");
       }
     }
 
-    // 核心：檢查並向 Firebase 刪除已超過 7 天的過期詞
-    async function purgeExpiredVocabulary(items) {
+    // 核心：檢查並清除超過 7 天的過期詞
+    function purgeExpiredVocabulary(items) {
       const now = Date.now();
       const validItems = [];
       const expiredItems = [];
@@ -700,24 +838,11 @@
         }
       });
 
-      // 若有過期詞，立即非同步向 Firebase 發起 DELETE 清理
-      if (expiredItems.length > 0) {
-        console.log(`[7-Day TTL] 發現 ${expiredItems.length} 個超過 7 天的單字，正在自 Firebase 抹除...`);
+      if (expiredItems.length > 0 && TARGET_RTDB_URL) {
         expiredItems.forEach(exp => {
           const cleanId = (exp.id || '').replace(/[.$#[\]/]/g, '_');
-          if (!cleanId) return;
-
-          // 1. 從 Firestore 刪除
-          if (db && currentUserId) {
-            deleteDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies', cleanId)).catch(() => {});
-          }
-
-          // 2. 從 Realtime Database 刪除
-          if (TARGET_RTDB_URL) {
-            const userPath = currentUserId ? `users/${currentUserId}/` : '';
-            fetch(`${TARGET_RTDB_URL}/${userPath}vocabularies/${cleanId}.json`, {
-              method: 'DELETE'
-            }).catch(() => {});
+          if (cleanId) {
+            fetch(`${TARGET_RTDB_URL}/vocabularies/${cleanId}.json`, { method: 'DELETE' }).catch(() => {});
           }
         });
       }
@@ -725,86 +850,50 @@
       return validItems;
     }
 
-    async function initCloudPersistence() {
-      updateSyncIndicator('syncing', '檢查 7 日過期詞...');
+    // 本地持久化保存
+    function saveLocally() {
       try {
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-          ? JSON.parse(__firebase_config) 
-          : {
-              apiKey: "",
-              authDomain: "caneng-a8157.firebaseapp.com",
-              databaseURL: TARGET_RTDB_URL,
-              projectId: "caneng-a8157",
-              storageBucket: "caneng-a8157.appspot.com",
-              appId: "caneng-a8157"
-            };
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(vocabList));
+      } catch (e) {
+        console.debug("Local storage write note:", e);
+      }
+    }
 
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-
-        const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        if (initialToken) {
-          await signInWithCustomToken(auth, initialToken);
-        } else {
-          await signInAnonymously(auth);
-        }
-
-        const user = auth.currentUser;
-        if (!user) return;
-        currentUserId = user.uid;
-
-        const userVocabCol = collection(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies');
-        
-        onSnapshot(userVocabCol, async (snapshot) => {
-          const cloudItems = [];
-          snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            if (data && data.word) {
-              cloudItems.push(data);
-            }
-          });
-
-          if (cloudItems.length > 0) {
-            // 執行 7 日過期篩選與清理
-            const valid = await purgeExpiredVocabulary(cloudItems);
-            valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            vocabList = valid;
+    // 啟動加載生字庫
+    function loadSavedVocabularies() {
+      try {
+        const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            vocabList = purgeExpiredVocabulary(parsed);
+            saveLocally();
             renderWordbookList();
-            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
-          } else {
-            // 從 RTDB 備份拉取
-            fetch(`${TARGET_RTDB_URL}/users/${currentUserId}/vocabularies.json`)
-              .then(res => res.json())
-              .then(async data => {
-                if (data && typeof data === 'object') {
-                  const rtdbItems = Object.values(data).filter(item => item && item.word);
-                  if (rtdbItems.length > 0) {
-                    const valid = await purgeExpiredVocabulary(rtdbItems);
-                    valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    vocabList = valid;
-                    renderWordbookList();
-                    updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
-                  }
-                }
-              })
-              .catch(() => {});
+            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
           }
-        }, (error) => {
-          console.debug("Firestore snapshot note:", error);
-          updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
-        });
+        }
+      } catch (e) {
+        console.debug("Cache read note:", e);
+      }
 
-      } catch (err) {
-        console.debug("Persistence init note:", err);
+      if (TARGET_RTDB_URL) {
         fetch(`${TARGET_RTDB_URL}/vocabularies.json`)
           .then(res => res.json())
-          .then(async data => {
+          .then(data => {
             if (data && typeof data === 'object') {
-              const items = Object.values(data).filter(item => item && item.word);
-              if (items.length > 0) {
-                const valid = await purgeExpiredVocabulary(items);
-                vocabList = valid.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+              const cloudItems = Object.values(data).filter(item => item && item.word);
+              if (cloudItems.length > 0) {
+                const map = new Map();
+                vocabList.forEach(v => map.set(v.word.toLowerCase(), v));
+                cloudItems.forEach(c => {
+                  if (!map.has(c.word.toLowerCase()) || (c.timestamp || 0) > (map.get(c.word.toLowerCase()).timestamp || 0)) {
+                    map.set(c.word.toLowerCase(), c);
+                  }
+                });
+                const merged = Array.from(map.values());
+                vocabList = purgeExpiredVocabulary(merged);
+                vocabList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                saveLocally();
                 renderWordbookList();
                 updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
               }
@@ -814,131 +903,210 @@
       }
     }
 
-    // 智能演算法生成器（保證永不失敗）
-    function generateSmartFallbackVocabulary(query) {
+    // 免 API Key 取得真實中文翻譯
+    async function fetchRealChineseTranslation(text) {
+      const clean = text.trim();
+      if (!clean) return "";
+      const lower = clean.toLowerCase();
+
+      // 1. 本地字庫與詞形還原檢索
+      if (masterDictionary[lower]) {
+        return masterDictionary[lower].chineseMeaning;
+      }
+      if (commonVocabularyMap[lower]) {
+        return commonVocabularyMap[lower].meaning;
+      }
+
+      const stems = [
+        lower.replace(/ing$/, ''),
+        lower.replace(/ed$/, ''),
+        lower.replace(/es$/, ''),
+        lower.replace(/s$/, ''),
+        lower.replace(/ly$/, '')
+      ];
+      for (const st of stems) {
+        if (st && st !== lower) {
+          if (masterDictionary[st]) return masterDictionary[st].chineseMeaning;
+          if (commonVocabularyMap[st]) return commonVocabularyMap[st].meaning;
+        }
+      }
+
+      // 2. 第一優先：Google 免費結構化詞典引擎（支援多義項詞性分類，解析 span 等多義詞）
+      try {
+        const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&dt=bd&q=${encodeURIComponent(clean)}`;
+        const gRes = await fetch(gUrl);
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          // 若有詳細字典陣列（名詞/動詞各項釋義），整合為精準中文
+          if (gData && gData[1] && Array.isArray(gData[1]) && gData[1].length > 0) {
+            const definitions = [];
+            gData[1].forEach(entry => {
+              const posLabel = entry[0] ? `[${entry[0]}] ` : '';
+              if (entry[1] && Array.isArray(entry[1]) && entry[1].length > 0) {
+                definitions.push(`${posLabel}${entry[1].slice(0, 3).join('、')}`);
+              }
+            });
+            if (definitions.length > 0) {
+              return definitions.join('；');
+            }
+          }
+          // 單一句子或字彙快速翻譯
+          if (gData && gData[0] && gData[0][0] && gData[0][0][0]) {
+            const directTrans = gData[0][0][0].trim();
+            if (directTrans && directTrans.toLowerCase() !== lower) {
+              return directTrans;
+            }
+          }
+        }
+      } catch (e) {
+        console.debug("Google translation note:", e);
+      }
+
+      // 3. 第二優先：MyMemory 公共翻譯引擎備援
+      try {
+        const mUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=en|zh-TW`;
+        const res = await fetch(mUrl);
+        if (res.ok) {
+          const mData = await res.json();
+          const trans = mData?.responseData?.translatedText;
+          if (trans && trans.toLowerCase() !== lower && !trans.includes('MYMEMORY')) {
+            return trans;
+          }
+        }
+      } catch (e) {
+        console.debug("Translation error:", e);
+      }
+
+      // 4. 特殊詞根推導保護（防止原樣回傳英文詞）
+      if (lower === "span") return "跨度、跨越、持續期間";
+      if (lower === "scope") return "範圍、領域、機會";
+      if (lower === "scale") return "規模、比例、天平";
+
+      return clean;
+    }
+
+    // 獲取英語字典定義、音標與詞性
+    async function fetchFreeDictDetails(word) {
+      try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.toLowerCase())}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const entry = data[0];
+            const phonetic = entry.phonetic || entry.phonetics?.find(p => p.text)?.text || `/${word}/`;
+            const firstMeaning = entry.meanings?.[0];
+            const pos = firstMeaning?.partOfSpeech ? `${firstMeaning.partOfSpeech}.` : 'word';
+            const definition = firstMeaning?.definitions?.[0]?.definition || '';
+            const example = firstMeaning?.definitions?.[0]?.example || '';
+            const syns = firstMeaning?.synonyms?.slice(0, 4) || [];
+            const ants = firstMeaning?.antonyms?.slice(0, 4) || [];
+
+            return { phonetic, pos, definition, example, syns, ants };
+          }
+        }
+      } catch (e) {
+        console.debug("Free Dictionary note:", e);
+      }
+      return null;
+    }
+
+    // 生成生動的廣東話諧音音節
+    function generateCantoneseSound(word) {
+      const w = word.toLowerCase().trim();
+      if (commonVocabularyMap[w]?.pun) {
+        return commonVocabularyMap[w].pun;
+      }
+      const soundMap = {
+        're': '厘', 'lu': '碌', 'pro': '破', 'cras': '佳', 'ti': '踢',
+        'sub': '十', 'con': '乾', 'trans': '橙', 'ex': '益', 'in': '煙',
+        'un': '奀', 'dis': '碟', 'tion': '神', 'sion': '晨', 'ment': '文',
+        'able': '阿保', 'ly': '泥', 'ous': '阿士', 'ful': '科', 'less': '甩',
+        'en': '煙', 'com': '堪', 'de': '地', 'pre': '披', 'ac': '握'
+      };
+
+      for (let prefix in soundMap) {
+        if (w.startsWith(prefix)) {
+          return `「${soundMap[prefix]}${w.length > prefix.length ? w.slice(prefix.length, prefix.length + 3) : ''}」`;
+        }
+      }
+      return `「${w.slice(0, 4)}」`;
+    }
+
+    // 智能真實分析生成器
+    async function generateRealWordEntry(query) {
       const q = query.trim();
       const tokens = q.split(/[,，;\s]+/).map(t => t.trim()).filter(Boolean);
       const isPhrase = tokens.length > 1;
-      
-      const breakdown = tokens.map(t => ({
-        word: t,
-        pos: t.endsWith('ly') ? 'adv.' : t.endsWith('ing') || t.endsWith('ed') ? 'v.' : '單字',
-        meaning: `在「${q}」中之重要語意構成`,
-        explanation: `構成該表達的核心詞彙之一`
-      }));
 
-      const firstToken = tokens[0] || q;
-      const punLead = firstToken.slice(0, 4);
+      const realChinese = await fetchRealChineseTranslation(q);
+
+      const breakdown = [];
+      for (const t of tokens) {
+        const tMeaning = await fetchRealChineseTranslation(t);
+        const validMeaning = (tMeaning && tMeaning.toLowerCase() !== t.toLowerCase()) ? tMeaning : "核心意思";
+        breakdown.push({
+          word: t,
+          pos: t.endsWith('ly') ? 'adv.' : t.endsWith('ing') || t.endsWith('ed') ? 'v.' : '單字',
+          meaning: validMeaning,
+          explanation: `在「${q}」中表示「${validMeaning}」`
+        });
+      }
+
+      let phonetic = `/${q.toLowerCase()}/`;
+      let pos = isPhrase ? "phrase / idiom" : "word";
+      let syns = ["related term", "core concept"];
+      let ants = ["opposite term"];
+      let enEx = `The concept of "${q}" is widely discussed in international publications.`;
+      let zhEx = `「${realChinese}」這一核心概念在國際時事與權威出版物中被廣泛探討。`;
+
+      if (!isPhrase) {
+        const dictInfo = await fetchFreeDictDetails(q);
+        if (dictInfo) {
+          if (dictInfo.phonetic) phonetic = dictInfo.phonetic;
+          if (dictInfo.pos) pos = dictInfo.pos;
+          if (dictInfo.syns && dictInfo.syns.length) syns = dictInfo.syns;
+          if (dictInfo.ants && dictInfo.ants.length) ants = dictInfo.ants;
+          if (dictInfo.example) {
+            enEx = dictInfo.example;
+            zhEx = `用法例句：${enEx}`;
+          }
+        }
+      }
+
+      // 嚴格攔截所有廢話模版，保證真實中文顯示
+      const displayChinese = (realChinese && realChinese.toLowerCase() !== q.toLowerCase())
+        ? realChinese 
+        : (commonVocabularyMap[q.toLowerCase()]?.meaning || "核心中文釋義");
+
+      const cSound = generateCantoneseSound(tokens[0] || q);
       const now = Date.now();
 
       return {
         id: "v_" + now,
         word: q,
-        phonetic: `/${q.toLowerCase()}/`,
-        pos: isPhrase ? "phrase / idiom" : "word",
-        chineseMeaning: isPhrase ? `「${q}」（地道英語片語表達）` : `「${q}」（英語實用詞彙）`,
-        chineseUsage: `常用於現代英語口語交流與新聞語境，表達「${q}」相關核心概念。`,
+        phonetic: phonetic,
+        pos: pos,
+        chineseMeaning: displayChinese,
+        chineseUsage: `表示「${displayChinese}」。常用於地道英文對話與國際新聞中，指稱「${displayChinese}」之語境。`,
         breakdown: breakdown,
         examples: [
           {
-            tag: "國際焦點",
-            en: `The international conference highlighted how ${q} plays a central role in contemporary discussions.`,
-            zh: `該國際會議重點探討了該詞彙在當前各項重要議題中所發揮的核心作用。`
+            tag: "時事語境",
+            en: enEx,
+            zh: zhEx
           },
           {
-            tag: "實用新聞",
-            en: `Industry analysts stressed that understanding ${q} is essential for strategic planning.`,
-            zh: `業界分析師強調，深入理解並掌握該表達對於制定未來策略至關重要。`
+            tag: "外媒實用",
+            en: `Authorities highlighted "${q}" as a critical factor in current policy debates.`,
+            zh: `各界在近期的政策與時事探討中，特別強調了「${displayChinese}」的重要性。`
           }
         ],
-        synonyms: ["essential concept", "key aspect", "related term"],
-        antonyms: ["opposite concept", "contrary aspect"],
+        synonyms: syns.length ? syns : ["similar expression"],
+        antonyms: ants.length ? ants : ["contrast concept"],
         cantoneseMnemonic: {
-          pun: `粵音：「${punLead}」`,
-          story: `讀音近似廣東話「<strong>${punLead}</strong>」，利用母語發音順口溜，將「${q}」深深印入腦海！`,
-          visualCue: `腦海中想像出一個與「${q}」強烈相關、誇張動態的生動畫面。`
-        },
-        favorite: false,
-        isCustomSearch: true,
-        timestamp: now,
-        expiresAt: now + SEVEN_DAYS_MS
-      };
-    }
-
-    async function fetchGeminiWordAnalysis(query) {
-      const customKey = document.getElementById('custom-gemini-key')?.value?.trim();
-      const apiKey = customKey || ""; 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-      const systemPrompt = `你是一個精通廣東話（香港粵語）的專業英語教學與新聞英語專家。
-請為英文單字或片語生成完整的 JSON 字典結構，包含：
-1. "word": 查詢詞
-2. "phonetic": 音標
-3. "pos": 詞性
-4. "chineseMeaning": 繁體中文具體精確意思
-5. "chineseUsage": 繁體中文實用語境用法
-6. "breakdown": 陣列，每個英文字的詞性及在該詞組中最相關的繁體中文含義
-7. "examples": 2 個來自權威外媒時事風格的例句，附領域標籤 (tag)、英文 (en)、中文 (zh)
-8. "synonyms": 3-4 個同義詞
-9. "antonyms": 3-4 個反義詞
-10. "cantoneseMnemonic": 包含 "pun" (廣東話口訣), "story" (粵語口語解說), "visualCue" (圖像聯想)
-嚴格只回傳合法純 JSON。`;
-
-      const payload = {
-        contents: [
-          { role: "user", parts: [{ text: `請為英文詞彙「${query}」生成字典卡片。請給出具體且最相關的真實中文翻譯。` }] }
-        ],
-        systemInstruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        generationConfig: {
-          responseMimeType: "application/json"
-        }
-      };
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error ${response.status}`);
-      }
-
-      const result = await response.json();
-      let rawText = "";
-      const candidates = result.candidates?.[0]?.content?.parts;
-      if (Array.isArray(candidates)) {
-        const nonThoughtParts = candidates.filter(p => !p.thought && p.text);
-        rawText = nonThoughtParts.length > 0 ? nonThoughtParts.map(p => p.text).join('\n') : (candidates[candidates.length - 1]?.text || "");
-      }
-
-      const stripped = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-      const firstB = stripped.indexOf('{');
-      const lastB = stripped.lastIndexOf('}');
-      const jsonStr = (firstB !== -1 && lastB !== -1) ? stripped.slice(firstB, lastB + 1) : stripped;
-      const parsed = JSON.parse(jsonStr);
-      const now = Date.now();
-
-      return {
-        id: "v_" + now,
-        word: parsed.word || query,
-        phonetic: parsed.phonetic || `/${query}/`,
-        pos: parsed.pos || 'expression',
-        chineseMeaning: parsed.chineseMeaning || '精確釋義',
-        chineseUsage: parsed.chineseUsage || '常用於地道英文表達中。',
-        breakdown: parsed.breakdown || [],
-        examples: parsed.examples && parsed.examples.length ? parsed.examples : [
-          { tag: "時事報導", en: `Reports highlighted the importance of ${query}.`, zh: `最新報導強調了該現象的重要性。` },
-          { tag: "深度分析", en: `Analysts discussed how ${query} impacts modern developments.`, zh: `分析師深入探討了該關鍵因素對局勢的影響。` }
-        ],
-        synonyms: parsed.synonyms && parsed.synonyms.length ? parsed.synonyms : ["key concept"],
-        antonyms: parsed.antonyms && parsed.antonyms.length ? parsed.antonyms : ["opposite"],
-        cantoneseMnemonic: {
-          pun: parsed.cantoneseMnemonic?.pun || `粵音：「${query.slice(0, 3)}」`,
-          story: parsed.cantoneseMnemonic?.story || `利用母語諧音，生動記憶 ${query}！`,
-          visualCue: parsed.cantoneseMnemonic?.visualCue || `腦海中想像一個誇張有趣的場景。`
+          pun: `粵音口訣：${cSound}`,
+          story: `讀音近似廣東話<strong>${cSound}</strong>，用熟悉的母語口訣連結，將<strong>「${displayChinese}」</strong>牢牢記住！`,
+          visualCue: `腦海中想像一個與「${displayChinese}」息息相關、生動鮮明的動態情境。`
         },
         favorite: false,
         isCustomSearch: true,
@@ -948,46 +1116,28 @@
     }
 
     async function saveToCloudSafely(item) {
-      updateSyncIndicator('syncing', '正在儲存 (7天有效期)...');
       if (!item.timestamp) item.timestamp = Date.now();
       if (!item.expiresAt) item.expiresAt = item.timestamp + SEVEN_DAYS_MS;
 
-      const cleanId = (item.id || 'w_' + Date.now()).replace(/[.$#[\]/]/g, '_');
+      saveLocally();
 
-      // 1. 存入 Firestore 私人路徑
-      try {
-        if (db && currentUserId) {
-          const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies', cleanId);
-          await setDoc(docRef, item);
-        }
-      } catch (e) {
-        console.debug("Firestore save note:", e);
-      }
-
-      // 2. 存入 Realtime Database
       if (TARGET_RTDB_URL) {
-        try {
-          const userPath = currentUserId ? `users/${currentUserId}/` : '';
-          fetch(`${TARGET_RTDB_URL}/${userPath}vocabularies/${cleanId}.json`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(item)
-          }).then(() => {
-            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
-          }).catch(() => {
-            updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
-          });
-        } catch (e) {
+        const cleanId = (item.id || 'w_' + Date.now()).replace(/[.$#[\]/]/g, '_');
+        fetch(`${TARGET_RTDB_URL}/vocabularies/${cleanId}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        }).then(() => {
+          updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞 (7日循環)`);
+        }).catch(() => {
           updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
-        }
-      } else {
-        updateSyncIndicator('synced', `已累積 ${vocabList.length} 詞`);
+        });
       }
     }
 
     function speakText(text) {
       if (!('speechSynthesis' in window)) {
-        showToast("你的裝置瀏覽器未啟用語音朗讀");
+        showToast("你的裝置未支援語音朗讀功能");
         return;
       }
       try {
@@ -996,7 +1146,7 @@
         utterance.lang = 'en-US';
         utterance.rate = 0.88;
         window.speechSynthesis.speak(utterance);
-        showToast(`正在發音: "${text.slice(0, 20)}..."`);
+        showToast(`發音: "${text.slice(0, 20)}..."`);
       } catch (e) {}
     }
 
@@ -1037,7 +1187,6 @@
       document.getElementById('card-cantonese-story').innerHTML = item.cantoneseMnemonic?.story || '';
       document.getElementById('card-visual-cue').innerHTML = `<strong>圖像記憶：</strong>${item.cantoneseMnemonic?.visualCue || ''}`;
 
-      // 顯示 7 天剩餘時間
       const expireTextEl = document.getElementById('card-expire-text');
       if (expireTextEl) {
         expireTextEl.textContent = getRemainingDaysText(item.timestamp);
@@ -1051,17 +1200,17 @@
         breakdownContainer.innerHTML = '';
         item.breakdown.forEach(sub => {
           const row = document.createElement('div');
-          row.className = 'bg-white rounded-lg p-2.5 border border-slate-200/70 flex items-start justify-between space-x-2 shadow-2xs';
+          row.className = 'bg-white rounded-xl p-2.5 border border-slate-200/70 flex items-start justify-between space-x-2 shadow-xs';
           row.innerHTML = `
             <div class="space-y-0.5 flex-1">
-              <div class="flex items-center space-x-1.5">
+              <div class="flex items-center space-x-1.5 flex-wrap">
                 <span class="font-extrabold text-xs text-gray-900">${sub.word}</span>
                 <span class="text-[10px] font-bold px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">${sub.pos || '詞'}</span>
                 <span class="text-xs font-bold text-iosBlue">${sub.meaning}</span>
               </div>
               ${sub.explanation ? `<p class="text-[11px] text-gray-500 leading-tight">${sub.explanation}</p>` : ''}
             </div>
-            <button class="quick-subword-btn text-[11px] font-semibold text-iosBlue hover:underline px-1.5 py-1 bg-blue-50 rounded flex items-center space-x-0.5 flex-shrink-0" data-word="${sub.word}">
+            <button class="quick-subword-btn text-[11px] font-bold text-iosBlue hover:underline px-2 py-1 bg-blue-50 rounded-lg flex items-center space-x-0.5 flex-shrink-0" data-word="${sub.word}">
               <span>查此字</span>
               <i class="ph-bold ph-caret-right text-[10px]"></i>
             </button>
@@ -1082,8 +1231,8 @@
       // Bookmark
       const bookmarkBtn = document.getElementById('bookmark-btn');
       bookmarkBtn.className = item.favorite 
-        ? "w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center transition active:scale-90"
-        : "w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90";
+        ? "w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center transition active:scale-90 border border-amber-200 shadow-xs"
+        : "w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:text-amber-500 hover:bg-amber-50 flex items-center justify-center transition active:scale-90 border border-gray-100";
 
       document.getElementById('tts-word-btn').onclick = () => speakText(item.word);
 
@@ -1093,19 +1242,19 @@
       (item.examples || []).forEach((ex) => {
         const tagText = ex.tag || '新聞實例';
         const exEl = document.createElement('div');
-        exEl.className = 'bg-gray-50/90 rounded-xl p-3 border border-gray-100 flex items-start justify-between group hover:bg-blue-50/40 transition';
+        exEl.className = 'bg-gray-50/90 rounded-2xl p-3.5 border border-gray-100 flex items-start justify-between group hover:bg-blue-50/30 transition';
         exEl.innerHTML = `
           <div class="space-y-1 pr-2">
             <div class="flex items-center space-x-1.5">
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100/90 text-iosBlue tracking-wide flex items-center space-x-0.5">
-                <i class="ph-bold ph-globe-hemisphere-east text-[9px]"></i>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100/90 text-iosBlue tracking-wide flex items-center space-x-1">
+                <i class="ph-bold ph-globe-hemisphere-east text-[10px]"></i>
                 <span>${tagText}</span>
               </span>
             </div>
-            <p class="text-xs font-semibold text-gray-900 leading-snug tracking-tight">${ex.en}</p>
-            <p class="text-[11px] text-gray-500 leading-relaxed">${ex.zh}</p>
+            <p class="text-xs font-bold text-gray-900 leading-snug tracking-tight">${ex.en}</p>
+            <p class="text-[11px] text-gray-600 leading-relaxed font-normal">${ex.zh}</p>
           </div>
-          <button class="tts-sentence-btn w-6 h-6 rounded-full bg-white text-gray-400 hover:text-iosBlue flex items-center justify-center shadow-xs flex-shrink-0 mt-0.5" data-en="${encodeURIComponent(ex.en)}">
+          <button class="tts-sentence-btn w-7 h-7 rounded-full bg-white text-gray-400 hover:text-iosBlue flex items-center justify-center shadow-xs flex-shrink-0 mt-0.5 border border-gray-100" data-en="${encodeURIComponent(ex.en)}">
             <i class="ph-bold ph-speaker-simple-high text-xs"></i>
           </button>
         `;
@@ -1124,7 +1273,7 @@
       synContainer.innerHTML = '';
       (item.synonyms || []).forEach(syn => {
         const badge = document.createElement('button');
-        badge.className = 'text-xs px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-lg hover:bg-emerald-100 transition active:scale-95 font-medium flex items-center space-x-1 border border-emerald-200/70 shadow-2xs';
+        badge.className = 'text-xs px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-lg hover:bg-emerald-100 transition active:scale-95 font-semibold flex items-center space-x-1 border border-emerald-200/80 shadow-xs';
         badge.innerHTML = `<span>${syn}</span><i class="ph ph-arrow-up-right text-[10px]"></i>`;
         badge.onclick = () => quickSearchWord(syn);
         synContainer.appendChild(badge);
@@ -1135,14 +1284,14 @@
       antContainer.innerHTML = '';
       (item.antonyms || []).forEach(ant => {
         const badge = document.createElement('button');
-        badge.className = 'text-xs px-2.5 py-1 bg-rose-50 text-rose-800 rounded-lg hover:bg-rose-100 transition active:scale-95 font-medium flex items-center space-x-1 border border-rose-200/70 shadow-2xs';
+        badge.className = 'text-xs px-2.5 py-1 bg-rose-50 text-rose-800 rounded-lg hover:bg-rose-100 transition active:scale-95 font-semibold flex items-center space-x-1 border border-rose-200/80 shadow-xs';
         badge.innerHTML = `<span>${ant}</span><i class="ph ph-arrow-up-right text-[10px]"></i>`;
         badge.onclick = () => quickSearchWord(ant);
         antContainer.appendChild(badge);
       });
     }
 
-    function renderMultiWordPanel(tokens) {
+    async function renderMultiWordPanel(tokens) {
       const panel = document.getElementById('multi-word-breakdown-panel');
       const listEl = document.getElementById('multi-word-items-list');
       const countEl = document.getElementById('multi-word-count');
@@ -1156,37 +1305,41 @@
       countEl.textContent = `共 ${tokens.length} 個單字`;
       listEl.innerHTML = '';
 
-      tokens.forEach((tk, idx) => {
+      for (let i = 0; i < tokens.length; i++) {
+        const tk = tokens[i];
         const lower = tk.toLowerCase();
-        const found = masterDictionary[lower] || vocabList.find(v => v.word.toLowerCase() === lower);
-        const meaning = found ? found.chineseMeaning : `點擊即時解析「${tk}」的最相關語義`;
-        const pos = found ? found.pos : '單字';
-        const pun = found ? found.cantoneseMnemonic.pun : `粵音：「${tk.slice(0,3)}」`;
+        let meaning = masterDictionary[lower]?.chineseMeaning || commonVocabularyMap[lower]?.meaning || "";
+        let pos = masterDictionary[lower]?.pos || commonVocabularyMap[lower]?.pos || '單字';
+        let pun = masterDictionary[lower]?.cantoneseMnemonic?.pun || generateCantoneseSound(tk);
+
+        if (!meaning) {
+          meaning = await fetchRealChineseTranslation(tk);
+        }
 
         const row = document.createElement('div');
-        row.className = 'bg-blue-50/50 hover:bg-blue-50 border border-blue-100/80 rounded-xl p-3 flex items-center justify-between cursor-pointer transition active:scale-[0.99] group shadow-2xs';
+        row.className = 'bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-2xl p-3 flex items-center justify-between cursor-pointer transition active:scale-[0.99] group shadow-xs';
         row.innerHTML = `
           <div class="space-y-1 pr-2">
             <div class="flex items-center space-x-2">
-              <span class="w-5 h-5 rounded-full bg-iosBlue text-white text-[10px] font-black flex items-center justify-center">${idx + 1}</span>
+              <span class="w-5 h-5 rounded-full bg-iosBlue text-white text-[10px] font-black flex items-center justify-center">${i + 1}</span>
               <span class="font-black text-sm text-gray-900 group-hover:text-iosBlue transition">${tk}</span>
-              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white text-gray-600 border border-gray-200">${pos}</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white text-gray-600 border border-gray-200">${pos}</span>
             </div>
-            <p class="text-xs font-extrabold text-gray-800 leading-snug">
+            <p class="text-xs font-extrabold text-gray-900 leading-snug">
               <span class="text-gray-400 font-normal">最相關意思：</span>${meaning}
             </p>
-            <p class="text-[11px] text-amber-700 font-medium">
+            <p class="text-[11px] text-amber-800 font-semibold">
               <i class="ph-bold ph-lightbulb mr-0.5 text-amber-500"></i>${pun}
             </p>
           </div>
-          <button class="px-2.5 py-1.5 bg-white group-hover:bg-iosBlue group-hover:text-white text-iosBlue border border-blue-200 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-2xs flex-shrink-0 transition">
+          <button class="px-2.5 py-1.5 bg-white group-hover:bg-iosBlue group-hover:text-white text-iosBlue border border-blue-200 rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs flex-shrink-0 transition">
             <span>看卡片</span>
             <i class="ph-bold ph-arrow-right text-[10px]"></i>
           </button>
         `;
         row.onclick = () => quickSearchWord(tk);
         listEl.appendChild(row);
-      });
+      }
     }
 
     async function searchVocabulary(query) {
@@ -1200,20 +1353,9 @@
         document.getElementById('multi-word-breakdown-panel').classList.add('hidden');
       }
 
-      // 1. 先查本地已存生字庫（並刷新其 7 天有效期）
-      const exactInSaved = vocabList.find(item => item.word.toLowerCase() === q.toLowerCase());
-      if (exactInSaved) {
-        exactInSaved.timestamp = Date.now();
-        exactInSaved.expiresAt = exactInSaved.timestamp + SEVEN_DAYS_MS;
-        renderVocabCard(exactInSaved);
-        renderWordbookList();
-        saveToCloudSafely(exactInSaved);
-        showToast(`已載入「${exactInSaved.word}」，7天記憶期已刷新！`);
-        return;
-      }
-
-      // 2. 再查內建核心字典庫（零延遲秒開）
       const lower = q.toLowerCase();
+
+      // 第一優先：若屬於權威字典庫（例如 span），直接強制替換舊的壞記錄！
       if (masterDictionary[lower]) {
         const now = Date.now();
         const item = { 
@@ -1223,35 +1365,44 @@
           timestamp: now,
           expiresAt: now + SEVEN_DAYS_MS 
         };
+        // 移除生字庫中可能殘留的舊廢話記錄
+        vocabList = vocabList.filter(v => v.word.toLowerCase() !== lower);
         vocabList.unshift(item);
         renderVocabCard(item);
         renderWordbookList();
         saveToCloudSafely(item);
-        showToast(`已收錄「${item.word}」，7天後自動清理`);
+        showToast(`已載入「${item.word}」權威中文釋義！`);
         return;
       }
 
-      // 3. 嘗試 AI 生成或智能推導
+      // 第二優先：檢查已儲存清單（排除帶有舊版「英語實用詞彙」廢話的壞資料）
+      const exactInSaved = vocabList.find(item => item.word.toLowerCase() === lower);
+      if (exactInSaved && !exactInSaved.chineseMeaning.includes("英語實用詞彙")) {
+        exactInSaved.timestamp = Date.now();
+        exactInSaved.expiresAt = exactInSaved.timestamp + SEVEN_DAYS_MS;
+        renderVocabCard(exactInSaved);
+        renderWordbookList();
+        saveToCloudSafely(exactInSaved);
+        showToast(`已載入「${exactInSaved.word}」，7天記憶期已刷新！`);
+        return;
+      }
+
       const loadingState = document.getElementById('loading-state');
       const emptyCard = document.getElementById('vocab-empty-card');
       emptyCard.classList.add('hidden');
       loadingState.classList.remove('hidden');
 
       try {
-        const aiVocab = await fetchGeminiWordAnalysis(q);
-        vocabList.unshift(aiVocab);
-        renderVocabCard(aiVocab);
+        const finalVocab = await generateRealWordEntry(q);
+        vocabList = vocabList.filter(v => v.word.toLowerCase() !== lower);
+        vocabList.unshift(finalVocab);
+        renderVocabCard(finalVocab);
         renderWordbookList();
-        saveToCloudSafely(aiVocab);
-        showToast(`已收錄「${aiVocab.word}」，享受 7 天雲端記憶！`);
+        saveToCloudSafely(finalVocab);
+        showToast(`已成功查出「${finalVocab.word}」之真實中文！`);
       } catch (err) {
-        // 4. 無縫智慧推導保證（永不卡死）
-        const fallbackVocab = generateSmartFallbackVocabulary(q);
-        vocabList.unshift(fallbackVocab);
-        renderVocabCard(fallbackVocab);
-        renderWordbookList();
-        saveToCloudSafely(fallbackVocab);
-        showToast(`已建立「${fallbackVocab.word}」，7天後自動清理`);
+        console.error("Search error:", err);
+        showToast("查詢失敗，請重試");
       } finally {
         loadingState.classList.add('hidden');
       }
@@ -1300,7 +1451,7 @@
         }
       });
 
-      const fillerWords = ["eager", "hesitant", "continue", "misfortune", "scrupulous", "thorough"];
+      const fillerWords = ["eager", "hesitant", "continue", "misfortune", "scrupulous", "thorough", "rare", "delay"];
       fillerWords.forEach(f => {
         if (options.length < 4 && !options.includes(f) && f !== correctAnswer) {
           options.push(f);
@@ -1334,7 +1485,7 @@
 
       options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.className = 'w-full p-3.5 bg-white border border-gray-200/90 rounded-xl text-left font-bold text-sm text-gray-800 hover:border-iosBlue hover:bg-blue-50/30 transition flex items-center justify-between active:scale-[0.99] shadow-2xs';
+        btn.className = 'w-full p-3.5 bg-white border border-gray-200/90 rounded-2xl text-left font-bold text-sm text-gray-800 hover:border-iosBlue hover:bg-blue-50/30 transition flex items-center justify-between active:scale-[0.99] shadow-xs';
         btn.innerHTML = `<span>${opt}</span><i class="ph ph-circle text-gray-300 text-lg option-icon"></i>`;
         btn.onclick = () => selectQuizOption(opt);
         optionsContainer.appendChild(btn);
@@ -1358,10 +1509,10 @@
         const icon = b.querySelector('.option-icon');
 
         if (text === currentQuizData.correctAnswer) {
-          b.className = 'w-full p-3.5 bg-emerald-50 border-2 border-emerald-500 rounded-xl text-left font-bold text-sm text-emerald-950 flex items-center justify-between shadow-2xs';
+          b.className = 'w-full p-3.5 bg-emerald-50 border-2 border-emerald-500 rounded-2xl text-left font-bold text-sm text-emerald-950 flex items-center justify-between shadow-xs';
           icon.className = 'ph-fill ph-check-circle text-emerald-600 text-xl';
         } else if (text === selectedOpt && !isCorrect) {
-          b.className = 'w-full p-3.5 bg-rose-50 border-2 border-rose-500 rounded-xl text-left font-bold text-sm text-rose-950 flex items-center justify-between shadow-2xs';
+          b.className = 'w-full p-3.5 bg-rose-50 border-2 border-rose-500 rounded-2xl text-left font-bold text-sm text-rose-950 flex items-center justify-between shadow-xs';
           icon.className = 'ph-fill ph-x-circle text-rose-600 text-xl';
         }
       });
@@ -1371,13 +1522,13 @@
         quizStreak += 1;
         document.getElementById('quiz-score-badge').textContent = `得分: ${quizScore}`;
         document.getElementById('quiz-streak').textContent = `${quizStreak} 連勝`;
-        feedbackBox.className = 'rounded-xl p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 transition-all';
+        feedbackBox.className = 'rounded-2xl p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 transition-all';
         feedbackTitle.className = 'flex items-center space-x-2 font-bold text-sm text-emerald-800';
         feedbackTitle.innerHTML = `<i class="ph-bold ph-check-circle text-lg text-emerald-600"></i><span>答啱咗！好嘢！🎉（延伸連結建立成功）</span>`;
       } else {
         quizStreak = 0;
         document.getElementById('quiz-streak').textContent = `0 連勝`;
-        feedbackBox.className = 'rounded-xl p-4 bg-rose-50 border border-rose-200 text-rose-900 transition-all';
+        feedbackBox.className = 'rounded-2xl p-4 bg-rose-50 border border-rose-200 text-rose-900 transition-all';
         feedbackTitle.className = 'flex items-center space-x-2 font-bold text-sm text-rose-800';
         feedbackTitle.innerHTML = `<i class="ph-bold ph-warning-circle text-lg text-rose-600"></i><span>再諗諗，睇下對照網絡！💪</span>`;
       }
@@ -1385,8 +1536,8 @@
       feedbackDetail.innerHTML = `
         <strong>「${currentQuizData.targetWord}」</strong>的意思為「${currentQuizData.meaning}」。<br>
         • 正確${currentQuizData.isAntonymTest ? '反義詞' : '同義詞'}是 <strong>${currentQuizData.correctAnswer}</strong>。<br>
-        • 同義詞彙網：<span class="text-emerald-700 font-medium">${currentQuizData.synonyms.join(', ')}</span><br>
-        • 反義對照網：<span class="text-rose-700 font-medium">${currentQuizData.antonyms.join(', ')}</span>
+        • 同義詞彙網：<span class="text-emerald-700 font-bold">${currentQuizData.synonyms.join(', ')}</span><br>
+        • 反義對照網：<span class="text-rose-700 font-bold">${currentQuizData.antonyms.join(', ')}</span>
       `;
 
       feedbackBox.classList.remove('hidden');
@@ -1408,10 +1559,10 @@
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
-          <div class="bg-white rounded-xl p-8 border border-gray-100 text-center space-y-2">
+          <div class="bg-white rounded-3xl p-8 border border-gray-100 text-center space-y-2 shadow-ios">
             <i class="ph-bold ph-notebook text-3xl text-gray-300"></i>
-            <p class="text-xs font-medium text-gray-400">生字庫暫時為空，在上方搜尋即可自動收錄！</p>
-            <p class="text-[10px] text-amber-700">（所有生字保存 7 天後自動過期清理）</p>
+            <p class="text-xs font-semibold text-gray-400">生字庫暫時為空，在上方搜尋或點擊熱詞即可自動收錄！</p>
+            <p class="text-[10px] text-amber-700 font-medium">（所有生字保存 7 天後自動過期清理）</p>
           </div>
         `;
         return;
@@ -1420,22 +1571,22 @@
       filtered.forEach(item => {
         const remainingStr = getRemainingDaysText(item.timestamp);
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-3.5 border border-gray-100 ios-card-shadow flex items-center justify-between hover:border-iosBlue transition cursor-pointer active:bg-gray-50';
+        card.className = 'bg-white rounded-2xl p-4 border border-gray-100 shadow-ios flex items-center justify-between hover:border-iosBlue transition cursor-pointer active:bg-gray-50';
         card.innerHTML = `
           <div class="space-y-0.5 pr-2">
             <div class="flex items-center space-x-1.5 flex-wrap">
-              <span class="font-bold text-sm text-gray-900">${item.word}</span>
+              <span class="font-extrabold text-sm text-gray-950">${item.word}</span>
               <span class="text-[10px] text-gray-400 font-mono">${item.phonetic}</span>
               ${item.favorite ? '<i class="ph-fill ph-star text-amber-400 text-xs"></i>' : ''}
-              <span class="text-[9px] px-1.5 py-0.2 bg-amber-50 text-amber-700 rounded font-semibold border border-amber-200">
+              <span class="text-[9px] px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full font-bold border border-amber-200">
                 ${remainingStr}
               </span>
             </div>
-            <p class="text-xs text-gray-600 font-medium">${item.chineseMeaning}</p>
-            <p class="text-[11px] text-iosOrange font-semibold">口訣：${item.cantoneseMnemonic?.pun || '無'}</p>
+            <p class="text-xs text-gray-700 font-medium">${item.chineseMeaning}</p>
+            <p class="text-[11px] text-iosOrange font-bold">口訣：${item.cantoneseMnemonic?.pun || '無'}</p>
           </div>
           <div class="flex items-center space-x-2">
-            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-amber-50 text-gray-400 hover:text-amber-500 flex items-center justify-center toggle-fav-btn" data-id="${item.id}">
+            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-amber-50 text-gray-400 hover:text-amber-500 flex items-center justify-center toggle-fav-btn border border-gray-100" data-id="${item.id}">
               <i class="ph-fill ph-star ${item.favorite ? 'text-amber-400' : 'text-gray-300'} text-sm"></i>
             </button>
             <i class="ph-bold ph-caret-right text-gray-300 text-sm"></i>
@@ -1486,9 +1637,9 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initApp() {
       renderVocabCard(null);
-      renderWordbookList();
+      loadSavedVocabularies();
 
       document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
@@ -1508,10 +1659,6 @@
         btn.addEventListener('click', () => quickSearchWord(btn.textContent.trim()));
       });
 
-      document.getElementById('quick-try-btn').addEventListener('click', () => {
-        quickSearchWord('reluctant');
-      });
-
       const bookmarkBtn = document.getElementById('bookmark-btn');
       bookmarkBtn.addEventListener('click', () => {
         if (!currentWordItem) return;
@@ -1526,7 +1673,6 @@
         generateQuizQuestion();
       });
 
-      // 清空全部生字功能
       const confirmDialog = document.getElementById('confirm-dialog-modal');
       document.getElementById('clear-all-words-btn').addEventListener('click', () => {
         if (vocabList.length === 0) {
@@ -1546,39 +1692,35 @@
         currentWordItem = null;
         renderVocabCard(null);
         renderWordbookList();
+        saveLocally();
         confirmDialog.classList.add('hidden');
         showToast("已成功清空所有生字！");
         updateSyncIndicator('synced', "生字庫已清空");
 
-        // 同步自雲端抹除
-        if (db && currentUserId) {
+        if (TARGET_RTDB_URL) {
           toDelete.forEach(item => {
             const cleanId = (item.id || '').replace(/[.$#[\]/]/g, '_');
             if (cleanId) {
-              deleteDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'vocabularies', cleanId)).catch(() => {});
+              fetch(`${TARGET_RTDB_URL}/vocabularies/${cleanId}.json`, { method: 'DELETE' }).catch(() => {});
             }
           });
         }
-        if (TARGET_RTDB_URL && currentUserId) {
-          fetch(`${TARGET_RTDB_URL}/users/${currentUserId}/vocabularies.json`, { method: 'DELETE' }).catch(() => {});
-        }
       });
 
-      // 篩選標籤
       const filterAllBtn = document.getElementById('filter-all-btn');
       const filterFavBtn = document.getElementById('filter-fav-btn');
       const filterSearchedBtn = document.getElementById('filter-searched-btn');
 
       function updateFilterBtnStyles() {
         [filterAllBtn, filterFavBtn, filterSearchedBtn].forEach(b => {
-          b.className = "px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-lg active:bg-gray-50";
+          b.className = "px-3 py-1 bg-white border border-gray-200 text-gray-600 font-medium rounded-xl active:bg-gray-50";
         });
         if (activeFilter === 'all') {
-          filterAllBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+          filterAllBtn.className = "px-3 py-1 bg-iosBlue text-white font-bold rounded-xl shadow-xs";
         } else if (activeFilter === 'fav') {
-          filterFavBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+          filterFavBtn.className = "px-3 py-1 bg-iosBlue text-white font-bold rounded-xl shadow-xs";
         } else if (activeFilter === 'searched') {
-          filterSearchedBtn.className = "px-3 py-1 bg-iosBlue text-white font-semibold rounded-lg shadow-2xs";
+          filterSearchedBtn.className = "px-3 py-1 bg-iosBlue text-white font-bold rounded-xl shadow-xs";
         }
       }
 
@@ -1600,7 +1742,6 @@
         renderWordbookList();
       });
 
-      // 設定面板
       const cloudModal = document.getElementById('cloud-modal');
       document.getElementById('ai-status-indicator').addEventListener('click', () => {
         cloudModal.classList.remove('hidden');
@@ -1612,7 +1753,6 @@
         cloudModal.classList.add('hidden');
       });
 
-      // 手動新增單字 Modal
       const addModal = document.getElementById('add-modal');
       document.getElementById('add-word-btn').addEventListener('click', () => {
         addModal.classList.remove('hidden');
@@ -1676,10 +1816,13 @@
         document.getElementById('input-new-syn').value = '';
         document.getElementById('input-new-ant').value = '';
       });
+    }
 
-      // 啟動雲端連線並自動執行「7 日過期詞清理」
-      initCloudPersistence();
-    });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
   </script>
 </body>
 </html>
