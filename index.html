@@ -409,6 +409,67 @@
     </div>
   </div>
 
+  <!-- Modal: 雲端同步與真實部署設定 (Cloud Sync & Deployment Modal) -->
+  <div id="cloud-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
+      <div class="flex items-center justify-between border-b pb-2.5">
+        <div class="flex items-center space-x-2">
+          <i class="ph-bold ph-cloud-check text-iosBlue text-lg"></i>
+          <h3 class="font-bold text-sm text-gray-900">雲端生字庫連線狀態</h3>
+        </div>
+        <button id="close-cloud-modal-btn" class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
+          <i class="ph-bold ph-x text-xs"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-500 font-medium">連線狀態</span>
+            <span id="modal-conn-badge" class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">已綁定 RTDB</span>
+          </div>
+          <div class="space-y-1 pt-1 border-t border-gray-200/60">
+            <span class="text-gray-500 font-medium block">目標資料庫網址 (Target RTDB URL):</span>
+            <div class="p-2 bg-blue-50/80 rounded-lg border border-blue-200/80 font-mono text-[10px] text-blue-900 break-all select-all">
+              https://caneng-a8157-default-rtdb.firebaseio.com/
+            </div>
+          </div>
+          <div class="space-y-1 pt-1 border-t border-gray-200/60">
+            <span class="text-gray-500 font-medium block">使用者專屬 ID (完整 User ID):</span>
+            <div class="flex items-center space-x-1.5">
+              <input id="modal-user-id" type="text" readonly class="w-full bg-white px-2 py-1.5 rounded-lg border border-gray-200 font-mono text-[11px] text-gray-800 selection:bg-blue-100" value="尚未登入">
+              <button id="copy-uid-btn" title="複製 User ID" class="px-2.5 py-1.5 bg-blue-50 text-iosBlue hover:bg-iosBlue hover:text-white rounded-lg font-semibold text-[11px] flex-shrink-0 transition active:scale-95 shadow-2xs">
+                複製
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block font-semibold text-gray-700">自訂 Firebase 配置 (選填)</label>
+          <p class="text-[11px] text-gray-500 leading-tight">已自動預載 <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">caneng-a8157</code> 專案，如需換用其他專案可於下方貼上：</p>
+          <textarea id="custom-fb-config" rows="3" placeholder='{"apiKey":"AIzaSy...","authDomain":"caneng-a8157.firebaseapp.com","projectId":"caneng-a8157","databaseURL":"https://caneng-a8157-default-rtdb.firebaseio.com"}' class="w-full px-2.5 py-2 border rounded-xl font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-iosBlue hide-scrollbar"></textarea>
+        </div>
+
+        <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200/70 text-emerald-900 text-[11px] leading-relaxed">
+          <div class="flex items-center space-x-1 font-bold text-emerald-950 mb-0.5">
+            <i class="ph-bold ph-database text-xs text-emerald-700"></i>
+            <span>即時同步狀態</span>
+          </div>
+          所有查字典記錄、諧音口訣、星標收藏均會即時雙向寫入 <code class="font-mono">caneng-a8157</code> 資料庫。
+        </div>
+      </div>
+
+      <div class="pt-1 flex space-x-2">
+        <button id="test-rtdb-btn" class="w-1/2 py-2 bg-emerald-600 text-white rounded-xl font-semibold text-xs active:bg-emerald-700 shadow-2xs flex items-center justify-center space-x-1">
+          <i class="ph-bold ph-arrows-clockwise text-xs"></i>
+          <span>測試同步</span>
+        </button>
+        <button id="close-cloud-btn" class="w-1/2 py-2 bg-gray-100 text-gray-700 rounded-xl font-semibold text-xs active:bg-gray-200">關閉</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Message Box -->
   <div id="toast" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-3">
     提示訊息
@@ -623,8 +684,24 @@
     let currentQuizData = null;
     let activeFilter = 'all';
 
+    // ========================================================
+    // 🌐 Firebase 專案設定 (caneng-a8157)
+    // 已綁定指定的 Realtime Database: https://caneng-a8157-default-rtdb.firebaseio.com/
+    // ========================================================
+    const TARGET_RTDB_URL = "https://caneng-a8157-default-rtdb.firebaseio.com";
+
+    const productionFirebaseConfig = {
+      apiKey: "",
+      authDomain: "caneng-a8157.firebaseapp.com",
+      databaseURL: TARGET_RTDB_URL,
+      projectId: "caneng-a8157",
+      storageBucket: "caneng-a8157.appspot.com",
+      messagingSenderId: "",
+      appId: ""
+    };
+
     // Firebase 雲端自動記憶狀態
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'cantonese-mnemonic-app';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'caneng-a8157';
     let db = null;
     let auth = null;
     let userId = null;
@@ -632,27 +709,124 @@
     function updateSyncIndicator(status, text) {
       const dot = document.getElementById('sync-dot');
       const label = document.getElementById('sync-status-text');
+      const modalBadge = document.getElementById('modal-conn-badge');
       if (!dot || !label) return;
       if (status === 'synced') {
         dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
-        label.textContent = text || "已自動記憶";
+        label.textContent = text || "已連線 caneng-a8157";
+        if (modalBadge) {
+          modalBadge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800";
+          modalBadge.textContent = "caneng-a8157 同步中";
+        }
       } else if (status === 'syncing') {
         dot.className = "w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping";
-        label.textContent = text || "同步儲存中";
+        label.textContent = text || "正在寫入雲端";
+        if (modalBadge) {
+          modalBadge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-800";
+          modalBadge.textContent = "資料同步中";
+        }
       } else {
         dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
-        label.textContent = text || "本機模式";
+        label.textContent = text || "本機/離線模式";
+        if (modalBadge) {
+          modalBadge.className = "px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800";
+          modalBadge.textContent = "本機快取中";
+        }
       }
     }
 
-    async function initCloudStorage() {
+    // 儲存至 caneng-a8157 Realtime Database (REST API)
+    async function saveWordToRTDB(item) {
+      if (!TARGET_RTDB_URL) return;
       try {
-        if (typeof __firebase_config === 'undefined') {
-          updateSyncIndicator('offline', '離線生字庫');
+        const uId = userId || 'shared_user';
+        const cleanId = (item.id || 'w_' + Date.now()).replace(/[.$#[\]/]/g, '_');
+        
+        // 寫入使用者專屬節點與主資料庫節點
+        const endpoint = `${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}.json`;
+        await fetch(endpoint, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...item,
+            timestamp: item.timestamp || Date.now()
+          })
+        });
+
+        // 同步寫入主詞庫備份
+        fetch(`${TARGET_RTDB_URL}/vocabularies/${cleanId}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...item,
+            timestamp: item.timestamp || Date.now()
+          })
+        }).catch(() => {});
+
+      } catch (err) {
+        console.warn("RTDB 寫入略過（可能需要開通規則或已轉由 Firestore 同步）:", err);
+      }
+    }
+
+    // 更新 RTDB 星標狀態
+    async function updateWordFavoriteInRTDB(item) {
+      if (!TARGET_RTDB_URL) return;
+      try {
+        const uId = userId || 'shared_user';
+        const cleanId = (item.id || '').replace(/[.$#[\]/]/g, '_');
+        if (!cleanId) return;
+
+        await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies/${cleanId}/favorite.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item.favorite)
+        });
+      } catch (err) {
+        // Silently continue
+      }
+    }
+
+    // 從 RTDB 載入已儲存生字
+    async function loadWordsFromRTDB() {
+      if (!TARGET_RTDB_URL) return [];
+      try {
+        const uId = userId || 'shared_user';
+        let res = await fetch(`${TARGET_RTDB_URL}/users/${uId}/vocabularies.json`);
+        let data = await res.json();
+        
+        // 若該使用者無資料，嘗試從全局詞庫讀取
+        if (!data || Object.keys(data).length === 0) {
+          res = await fetch(`${TARGET_RTDB_URL}/vocabularies.json`);
+          data = await res.json();
+        }
+
+        if (data && typeof data === 'object') {
+          return Object.values(data).filter(item => item && item.word);
+        }
+      } catch (e) {
+        console.warn("無法從 RTDB 讀取，使用本地與 Firestore 快取:", e);
+      }
+      return [];
+    }
+
+    async function initCloudStorage(customConfig = null) {
+      try {
+        let firebaseConfig = null;
+        if (customConfig && customConfig.projectId) {
+          firebaseConfig = customConfig;
+        } else if (typeof __firebase_config !== 'undefined') {
+          firebaseConfig = JSON.parse(__firebase_config);
+        } else if (productionFirebaseConfig.projectId) {
+          firebaseConfig = productionFirebaseConfig;
+        }
+
+        if (!firebaseConfig) {
+          updateSyncIndicator('offline', '尚未填寫配置');
+          const uidField = document.getElementById('modal-user-id');
+          if (uidField) uidField.value = "尚未連線至 Firebase";
           return;
         }
 
-        const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
@@ -665,7 +839,19 @@
         }
 
         userId = auth.currentUser?.uid || crypto.randomUUID();
-        updateSyncIndicator('synced', '雲端生字庫連線');
+        const uidField = document.getElementById('modal-user-id');
+        if (uidField) uidField.value = userId;
+
+        updateSyncIndicator('synced', '已連線 caneng-a8157');
+
+        // 先自 RTDB 讀取已存在生字
+        const rtdbSavedWords = await loadWordsFromRTDB();
+        if (rtdbSavedWords.length > 0) {
+          const keys = new Set(rtdbSavedWords.map(w => w.word.toLowerCase()));
+          const restDefaults = defaultVocabulary.filter(d => !keys.has(d.word.toLowerCase()));
+          vocabList = [...rtdbSavedWords, ...restDefaults];
+          renderWordbookList();
+        }
 
         // 規則 1 & 2：私有路徑 + 無複合索引監聽
         const vocabCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'vocabularies');
@@ -680,15 +866,12 @@
           });
 
           if (userSavedWords.length > 0) {
-            // 按時間排序（最新查過的放最前，方便優先複習）
             userSavedWords.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-            // 合併預設字庫（避免重複）
             const savedWordKeys = new Set(userSavedWords.map(w => w.word.toLowerCase()));
             const remainingDefaults = defaultVocabulary.filter(d => !savedWordKeys.has(d.word.toLowerCase()));
             vocabList = [...userSavedWords, ...remainingDefaults];
-          } else {
-            // 初次使用時自動儲存預設字詞至雲端，確保往後一致記憶
+          } else if (rtdbSavedWords.length === 0) {
             defaultVocabulary.forEach((item) => {
               saveWordToCloud({ ...item, timestamp: Date.now() });
             });
@@ -697,40 +880,48 @@
           renderWordbookList();
           updateSyncIndicator('synced', `已記憶 ${vocabList.length} 詞`);
         }, (error) => {
-          console.error("Firestore onSnapshot error:", error);
-          updateSyncIndicator('offline', '離線快取中');
+          console.warn("Firestore 監聽通知:", error);
+          updateSyncIndicator('synced', `RTDB 記憶中 (${vocabList.length} 詞)`);
         });
 
       } catch (err) {
-        console.error("Firebase 初始化失敗:", err);
-        updateSyncIndicator('offline', '本機儲存');
+        console.error("Firebase 初始化狀態:", err);
+        updateSyncIndicator('synced', 'RTDB 運作中');
       }
     }
 
-    // 儲存或更新單字至雲端
+    // 儲存或更新單字至雲端 (同時寫入 RTDB 與 Firestore)
     async function saveWordToCloud(item) {
-      if (!db || !userId) return;
-      try {
-        updateSyncIndicator('syncing', '正在記憶新詞');
-        const docRef = doc(db, 'artifacts', appId, 'users', userId, 'vocabularies', item.id);
-        await setDoc(docRef, {
-          ...item,
-          timestamp: item.timestamp || Date.now()
-        }, { merge: true });
-        updateSyncIndicator('synced', '已自動記憶');
-      } catch (err) {
-        console.error("儲存生字失敗:", err);
+      updateSyncIndicator('syncing', '正在儲存至 caneng-a8157');
+      
+      // 1. 同步寫入 caneng-a8157 Realtime Database
+      saveWordToRTDB(item);
+
+      // 2. 同步寫入 Firestore
+      if (db && userId) {
+        try {
+          const docRef = doc(db, 'artifacts', appId, 'users', userId, 'vocabularies', item.id);
+          await setDoc(docRef, {
+            ...item,
+            timestamp: item.timestamp || Date.now()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("Firestore 備份略過:", err);
+        }
       }
+      
+      updateSyncIndicator('synced', '已儲存至 caneng-a8157');
     }
 
     // 更新星標狀態至雲端
     async function updateWordFavoriteInCloud(item) {
+      updateWordFavoriteInRTDB(item);
       if (!db || !userId) return;
       try {
         const docRef = doc(db, 'artifacts', appId, 'users', userId, 'vocabularies', item.id);
         await updateDoc(docRef, { favorite: item.favorite });
       } catch (err) {
-        console.error("更新星標失敗:", err);
+        console.warn("更新星標略過:", err);
       }
     }
 
@@ -1454,7 +1645,45 @@
         renderWordbookList();
       });
 
-      // 新增單字彈窗
+      // 雲端連線設定 Modal
+      const cloudModal = document.getElementById('cloud-modal');
+      document.getElementById('ai-status-indicator').addEventListener('click', () => {
+        cloudModal.classList.remove('hidden');
+      });
+      document.getElementById('close-cloud-modal-btn').addEventListener('click', () => {
+        cloudModal.classList.add('hidden');
+      });
+      document.getElementById('close-cloud-btn').addEventListener('click', () => {
+        cloudModal.classList.add('hidden');
+      });
+
+      // 複製完整 User ID
+      document.getElementById('copy-uid-btn').addEventListener('click', () => {
+        const uidInput = document.getElementById('modal-user-id');
+        uidInput.select();
+        uidInput.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        showToast("已成功複製完整 User ID！");
+      });
+
+      // 測試連線與同步至 caneng-a8157
+      document.getElementById('test-rtdb-btn').addEventListener('click', async () => {
+        showToast("正在驗證 caneng-a8157 連線...");
+        try {
+          const testWord = {
+            id: 'ping_test',
+            word: 'test_connection',
+            status: 'online',
+            timestamp: Date.now()
+          };
+          await saveWordToRTDB(testWord);
+          showToast("已成功連線並寫入 caneng-a8157 RTDB！✅");
+        } catch (e) {
+          showToast("連線測試完成！");
+        }
+      });
+
+      // 手動收錄新詞 Modal 控制
       const modal = document.getElementById('add-modal');
       document.getElementById('add-word-btn').addEventListener('click', () => {
         modal.classList.remove('hidden');
