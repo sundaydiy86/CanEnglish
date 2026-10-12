@@ -392,6 +392,24 @@ mitigate, resilient, procrastinate, flourish"
     // 權威預載字典庫
     // ==========================================
     const masterDictionary = {
+      'constitute': {
+        word: 'constitute',
+        phonetic: '/ˈkɒn.stɪ.tjuːt/',
+        pos: 'verb 動詞',
+        chineseMeaning: '構成、組成、相當於',
+        chineseUsage: '常用於描述構成整體的主要部分，或法律、制度上構成某種事實或違規。',
+        examples: [
+          { tag: '法律規範', en: 'Failing to report financial discrepancies may constitute a serious regulatory offense.', zh: '未如實申報財務收支異常可能構成嚴重的監管違規行為。' },
+          { tag: '社會組織', en: 'Women and young professionals constitute more than sixty percent of the current workforce.', zh: '女性與青年專業人士佔了當前全體勞動力的六成以上。' }
+        ],
+        synonyms: ['compose', 'comprise', 'form', 'establish', 'make up', 'represent'],
+        antonyms: ['dismantle', 'disintegrate', 'abolish', 'dissolve'],
+        cantoneseMnemonic: {
+          pun: '粵音「看死條凸」',
+          story: '「看死（睇死）」佢哋「條條凸」出嚟嘅積木，可以一塊塊「構成」成座摩天大樓！',
+          visualCue: '建築師喺藍圖面前，用凸出嘅模組零件逐一拼接組成宏偉地標大廈。'
+        }
+      },
       'span': {
         word: 'span',
         phonetic: '/spæn/',
@@ -403,8 +421,8 @@ mitigate, resilient, procrastinate, flourish"
           { tag: '現代科技', en: 'Prolonged exposure to short-form video feeds can noticeably reduce your attention span.', zh: '長時間觀看短影音動態會顯著縮短個人的專注力持續時間。' },
           { tag: '歷史時事', en: 'His diplomatic career spanned over four decades of turbulent global political shifts.', zh: '他的外交生涯跨越了四十多年動盪起伏的全球政治變局。' }
         ],
-        synonyms: ['extent', 'duration', 'period', 'stretch', 'scope'],
-        antonyms: [],
+        synonyms: ['extent', 'duration', 'period', 'stretch', 'scope', 'reach'],
+        antonyms: ['limitation', 'point', 'instant'],
         cantoneseMnemonic: {
           pun: '粵音「西便（西邊）」',
           story: '由東邊一路跨越到「西便」，成座大橋跨度好長，時間更跨越咗大半個世紀！',
@@ -441,8 +459,8 @@ mitigate, resilient, procrastinate, flourish"
           { tag: '職場工作', en: 'If you procrastinate on this proposal, the team will miss the client deadline tomorrow morning.', zh: '如果你在這份企劃案上繼續拖延，團隊明早就會錯過客戶的截止期限。' },
           { tag: '個人管理', en: 'He tends to procrastinate whenever he is confronted with difficult mathematical calculations.', zh: '每當面對繁複艱深的數學計算時，他往往習慣性地一拖再拖。' }
         ],
-        synonyms: ['delay', 'postpone', 'defer', 'stall'],
-        antonyms: ['expedite', 'advance', 'accelerate'],
+        synonyms: ['delay', 'postpone', 'defer', 'stall', 'dally'],
+        antonyms: ['expedite', 'advance', 'accelerate', 'hasten'],
         cantoneseMnemonic: {
           pun: '粵音「破卡死拖泥」',
           story: '張信用卡「破卡」仲「死拖泥」唔去還，拖到最後罰息爆煲！',
@@ -460,8 +478,8 @@ mitigate, resilient, procrastinate, flourish"
           { tag: '經濟市場', en: 'The regional economy proved resilient despite persistent inflationary pressures.', zh: '儘管通膨壓力持續存在，區域經濟仍展現出強大的韌性與復原力。' },
           { tag: '個人成長', en: 'Resilient founders learn from failure and quickly pivot their business model.', zh: '堅毅有韌性的創業者會吸取失敗教訓，並迅速調整商業模式。' }
         ],
-        synonyms: ['tough', 'robust', 'tenacious', 'adaptable'],
-        antonyms: ['fragile', 'vulnerable', 'weak'],
+        synonyms: ['tough', 'robust', 'tenacious', 'adaptable', 'buoyant'],
+        antonyms: ['fragile', 'vulnerable', 'weak', 'brittle'],
         cantoneseMnemonic: {
           pun: '粵音「利是連」',
           story: '收「利是連」綿不斷，幾大打擊都好快彈返起、極有韌性！',
@@ -479,8 +497,8 @@ mitigate, resilient, procrastinate, flourish"
           { tag: '企業決策', en: 'The executive board decided to bite the bullet and terminate the loss-making regional division.', zh: '董事會最終決定咬緊牙關，痛下決心裁撤長期虧損的區域業務部門。' },
           { tag: '生活困境', en: 'After weeks of excruciating tooth pain, he finally bit the bullet and visited the dental clinic.', zh: '牙痛折磨了數星期後，他終於硬著頭皮走進了牙醫診所接受治療。' }
         ],
-        synonyms: ['face up to', 'confront', 'brave out'],
-        antonyms: ['evade', 'shirk', 'dodge'],
+        synonyms: ['face up to', 'confront', 'brave out', 'face the music'],
+        antonyms: ['evade', 'shirk', 'dodge', 'shrink from'],
         cantoneseMnemonic: {
           pun: '粵音「擺個玻璃」',
           story: '「擺個玻璃」咬住佢頂硬上，再痛都要咬緊牙關捱過去！',
@@ -536,7 +554,132 @@ mitigate, resilient, procrastinate, flourish"
           }
         }
       } catch (e) {}
-      return "常用英文單字";
+      return "實用英文詞彙";
+    }
+
+    // ==========================================
+    // 智慧語義與廣東話記憶生成引擎 (Gemini 3 Flash + Datamuse)
+    // ==========================================
+    async function fetchDatamuseSemantics(word) {
+      const result = { synonyms: [], antonyms: [] };
+      try {
+        const [synRes, antRes] = await Promise.all([
+          fetch(`https://api.datamuse.com/words?rel_syn=${encodeURIComponent(word)}&max=6`),
+          fetch(`https://api.datamuse.com/words?rel_ant=${encodeURIComponent(word)}&max=5`)
+        ]);
+        if (synRes.ok) {
+          const data = await synRes.json();
+          result.synonyms = data.map(item => item.word).filter(w => w && w !== word && !w.includes(' '));
+        }
+        if (antRes.ok) {
+          const data = await antRes.json();
+          result.antonyms = data.map(item => item.word).filter(w => w && w !== word && !w.includes(' '));
+        }
+      } catch (e) {}
+      return result;
+    }
+
+    async function generateAIEnhancedVocab(word, fastMeaning = '') {
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemPrompt = `你是一位精通廣東話（香港粵語）母語、英文及記憶心理學的頂級字典語言學家。
+請為使用者查詢的英文單字或片語生成地道、富幽默感、好記的【廣東話諧音口訣速記】、【圖像記憶】、【真實同義詞】、【真實反義詞】及【2句真實情境例句】。
+重要規範：
+1. 諧音口訣必須是地道的香港廣東話發音對照漢字（例如 constitute 諧音「看死條凸」、span 諧音「西便」、outperform 諧音「坳破風」），口訣故事要生動好笑或有強烈情境，能將粵音與中文意思緊密連繫。
+2. 圖像記憶（visualCue）：提供 20-30 字極具視覺畫面感的情景描述。
+3. 同義詞（synonyms）：提供 3-5 個高關聯真實英文同義詞。
+4. 反義詞（antonyms）：提供 2-4 個精確真實英文反義詞（若該詞無直接反義詞，請給予語意相對或相反的英文詞彙，絕不可留空或填寫佔位文字）。
+5. 例句（examples）：提供 2 個真實職場、時事或日常生活的高水準英文例句，並附上流暢地道的繁體中文翻譯。`;
+
+      const userPrompt = `請分析英文詞彙：「${word}」${fastMeaning ? `（中文參考：${fastMeaning}）` : ''}，並輸出繁體中文與地道香港粵語記憶內容。`;
+
+      const payload = {
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              phonetic: { type: "STRING" },
+              pos: { type: "STRING" },
+              chineseMeaning: { type: "STRING" },
+              chineseUsage: { type: "STRING" },
+              cantonesePun: { type: "STRING" },
+              cantoneseStory: { type: "STRING" },
+              visualCue: { type: "STRING" },
+              synonyms: { type: "ARRAY", items: { type: "STRING" } },
+              antonyms: { type: "ARRAY", items: { type: "STRING" } },
+              examples: {
+                type: "ARRAY",
+                items: {
+                  type: "OBJECT",
+                  properties: {
+                    tag: { type: "STRING" },
+                    en: { type: "STRING" },
+                    zh: { type: "STRING" }
+                  },
+                  required: ["tag", "en", "zh"]
+                }
+              }
+            },
+            required: ["phonetic", "pos", "chineseMeaning", "chineseUsage", "cantonesePun", "cantoneseStory", "visualCue", "synonyms", "antonyms", "examples"]
+          }
+        }
+      };
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const resJson = await response.json();
+          const candidateText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidateText) {
+            const parsed = JSON.parse(candidateText);
+            return {
+              phonetic: parsed.phonetic || `/${word}/`,
+              pos: parsed.pos || 'word',
+              chineseMeaning: parsed.chineseMeaning || fastMeaning,
+              chineseUsage: parsed.chineseUsage || '常用於現代英語地道情境。',
+              cantoneseMnemonic: {
+                pun: parsed.cantonesePun.startsWith('粵音') ? parsed.cantonesePun : `粵音「${parsed.cantonesePun}」`,
+                story: parsed.cantoneseStory,
+                visualCue: parsed.visualCue
+              },
+              synonyms: (parsed.synonyms || []).filter(s => s && s.toLowerCase() !== word.toLowerCase()),
+              antonyms: (parsed.antonyms || []).filter(a => a && a.toLowerCase() !== word.toLowerCase()),
+              examples: parsed.examples || []
+            };
+          }
+        }
+      } catch (err) {
+        console.warn("AI 記憶引擎調用失敗，切換至開放語義網絡備援:", err);
+      }
+
+      // 備援方案：Datamuse + 智能廣東話音節規則
+      const datamuseData = await fetchDatamuseSemantics(word);
+      return {
+        phonetic: `/${word}/`,
+        pos: 'word',
+        chineseMeaning: fastMeaning || '實用英文詞彙',
+        chineseUsage: '現代常用英語表達。',
+        cantoneseMnemonic: {
+          pun: `粵音速記「${word.slice(0, 4)}」`,
+          story: `讀音連繫中文「${fastMeaning}」，大聲讀出母語音調加深記憶！`,
+          visualCue: `在腦海想像一個與「${fastMeaning}」息息相關的清晰動態場景。`
+        },
+        synonyms: datamuseData.synonyms.length > 0 ? datamuseData.synonyms : ['related', 'equivalent'],
+        antonyms: datamuseData.antonyms.length > 0 ? datamuseData.antonyms : ['opposite', 'contrary'],
+        examples: [
+          { tag: '實用語境', en: `The term "${word}" is frequently used in professional communication.`, zh: `該詞彙常出現於專業交流與日常語境之中。` },
+          { tag: '生活運用', en: `Mastering "${word}" helps express ideas with precision.`, zh: `熟練掌握「${word}」有助於更精準地表達語意。` }
+        ]
+      };
     }
 
     async function importExtractedWords(words, thenGoToQuiz = false) {
@@ -603,14 +746,19 @@ mitigate, resilient, procrastinate, flourish"
 
       const existing = vocabList.find(i => i.word.toLowerCase() === q);
       if (existing) {
-        existing.timestamp = Date.now();
-        saveLocally();
-        vocabList = vocabList.filter(i => i.id !== existing.id);
-        vocabList.unshift(existing);
-        renderVocabCard(existing);
-        renderWordbookList();
-        showToast(`已載入「${q}」⚡`);
-        return;
+        // 如果先前儲存的詞彙缺失口訣或同反義詞，自動重新補足
+        const hasMissingMnemonic = !existing.cantoneseMnemonic || !existing.cantoneseMnemonic.visualCue;
+        const hasMissingSyns = !existing.synonyms || existing.synonyms.length === 0;
+        if (!hasMissingMnemonic && !hasMissingSyns) {
+          existing.timestamp = Date.now();
+          saveLocally();
+          vocabList = vocabList.filter(i => i.id !== existing.id);
+          vocabList.unshift(existing);
+          renderVocabCard(existing);
+          renderWordbookList();
+          showToast(`已載入「${q}」⚡`);
+          return;
+        }
       }
 
       if (masterDictionary[q]) {
@@ -618,19 +766,20 @@ mitigate, resilient, procrastinate, flourish"
         const newEntry = {
           id: 'v_' + Date.now(),
           ...item,
-          favorite: false,
+          favorite: existing ? existing.favorite : false,
           isCustomSearch: true,
           timestamp: Date.now()
         };
+        vocabList = vocabList.filter(i => i.word.toLowerCase() !== q);
         vocabList.unshift(newEntry);
         saveLocally();
         renderVocabCard(newEntry);
         renderWordbookList();
-        showToast(`成功查得「${item.word}」⚡`);
+        showToast(`已載入「${item.word}」⚡`);
         return;
       }
 
-      // 極速先出卡
+      // 第 1 步：0.1 秒先出卡（展示骨架屏與即時釋義）
       const provisionalEntry = {
         id: 'v_' + Date.now(),
         word: q,
@@ -650,23 +799,29 @@ mitigate, resilient, procrastinate, flourish"
 
       renderVocabCard(provisionalEntry);
 
-      const meaning = await quickFetchMeaning(q);
-      provisionalEntry.chineseMeaning = meaning;
-      provisionalEntry.isLoadingDetails = false;
-      provisionalEntry.cantoneseMnemonic = {
-        pun: `粵音「${q.slice(0, 4)}」`,
-        story: `讀音連繫中文「${meaning}」，加深記憶！`,
-        visualCue: '在腦海建立清晰動態情境。'
-      };
-      provisionalEntry.examples = [
-        { tag: '實用語境', en: `The term "${q}" is commonly applied in practical contexts.`, zh: `該表達常用於日常實用情境中。` }
-      ];
+      // 第 2 步：快速獲取中文意思並更新畫面
+      const fastMeaning = await quickFetchMeaning(q);
+      provisionalEntry.chineseMeaning = fastMeaning;
+      renderVocabCard(provisionalEntry);
 
+      // 第 3 步：調用 Gemini 3 Flash 生成完整的廣東話諧音口訣、圖像記憶、同義詞、反義詞及例句
+      const richDetails = await generateAIEnhancedVocab(q, fastMeaning);
+      provisionalEntry.phonetic = richDetails.phonetic;
+      provisionalEntry.pos = richDetails.pos;
+      provisionalEntry.chineseMeaning = richDetails.chineseMeaning;
+      provisionalEntry.chineseUsage = richDetails.chineseUsage;
+      provisionalEntry.cantoneseMnemonic = richDetails.cantoneseMnemonic;
+      provisionalEntry.synonyms = richDetails.synonyms;
+      provisionalEntry.antonyms = richDetails.antonyms;
+      provisionalEntry.examples = richDetails.examples;
+      provisionalEntry.isLoadingDetails = false;
+
+      vocabList = vocabList.filter(i => i.word.toLowerCase() !== q);
       vocabList.unshift(provisionalEntry);
       saveLocally();
       renderVocabCard(provisionalEntry);
       renderWordbookList();
-      showToast(`已收錄「${q}」！`);
+      showToast(`已完整收錄「${q}」廣東話記憶！🎉`);
     }
 
     // ==========================================
@@ -680,37 +835,57 @@ mitigate, resilient, procrastinate, flourish"
       window.currentActiveExamples = item.examples || [];
       const isLoading = !!item.isLoadingDetails;
 
-      const validSyns = (item.synonyms || []).filter(s => s && s !== item.word);
-      const validAnts = (item.antonyms || []).filter(a => a && a !== item.word);
+      const validSyns = (item.synonyms || []).filter(s => s && s.toLowerCase() !== item.word.toLowerCase());
+      const validAnts = (item.antonyms || []).filter(a => a && a.toLowerCase() !== item.word.toLowerCase());
 
       let synonymsHTML = validSyns.length > 0 
-        ? validSyns.map(s => `<button onclick="searchWord('${s}')" class="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200/80 rounded-xl text-xs font-semibold active:bg-emerald-100">${s} &nearr;</button>`).join('')
-        : `<span class="text-[11px] text-gray-400 font-medium px-1">暫無直接同義詞</span>`;
+        ? validSyns.map(s => `<button onclick="searchWord('${s.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200/80 rounded-xl text-xs font-semibold active:bg-emerald-100 transition-all">${s} &nearr;</button>`).join('')
+        : (isLoading 
+            ? `<div class="h-6 w-24 rounded-lg skeleton-shimmer"></div>` 
+            : `<span class="text-[11px] text-gray-400 font-medium px-1">暫無直接同義詞</span>`);
 
-      let antonymsHTML = validAnts.length > 0
-        ? validAnts.map(a => `<button onclick="searchWord('${a}')" class="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200/80 rounded-xl text-xs font-semibold active:bg-rose-100">${a} &nearr;</button>`).join('')
-        : `<span class="text-[11px] text-gray-400 font-medium px-1">無對應反義詞</span>`;
+      let antonymsHTML = validAnts.length > 0 
+        ? validAnts.map(a => `<button onclick="searchWord('${a.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200/80 rounded-xl text-xs font-semibold active:bg-rose-100 transition-all">${a} &nearr;</button>`).join('')
+        : (isLoading 
+            ? `<div class="h-6 w-24 rounded-lg skeleton-shimmer"></div>` 
+            : `<span class="text-[11px] text-gray-400 font-medium px-1">無對應反義詞</span>`);
 
       let mnemonicHTML = '';
       let examplesHTML = '';
 
-      if (isLoading) {
+      if (isLoading && !item.cantoneseMnemonic) {
         mnemonicHTML = `
-          <div class="p-4 bg-amber-50/50 rounded-2xl border border-amber-200/60 space-y-2.5">
+          <div class="p-4 bg-gradient-to-br from-amber-50/70 to-orange-50/30 rounded-2xl border border-amber-200/70 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-900 flex items-center space-x-1.5"><i class="ph-bold ph-chats-circle text-amber-600"></i><span>廣東話諧音口訣速記</span></span>
+              <span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-md animate-pulse">AI 構思中...</span>
+            </div>
             <div class="h-4 w-3/4 rounded-md skeleton-shimmer"></div>
             <div class="h-3 w-5/6 rounded-md skeleton-shimmer"></div>
+            <div class="h-3 w-2/3 rounded-md skeleton-shimmer"></div>
           </div>
         `;
-      } else {
+      } else if (item.cantoneseMnemonic) {
         mnemonicHTML = `
-          <div class="p-4 bg-gradient-to-br from-amber-50/90 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-2">
+          <div class="p-4 bg-gradient-to-br from-amber-50/95 to-orange-50/50 rounded-2xl border border-amber-200/90 shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1.5 text-amber-900 font-bold text-xs"><i class="ph-bold ph-chats-circle text-amber-600"></i><span>廣東話諧音口訣速記</span></div>
-              <span class="px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-200 text-amber-950">${item.cantoneseMnemonic?.pun || '粵音口訣'}</span>
+              <div class="flex items-center space-x-1.5 text-amber-900 font-extrabold text-xs">
+                <i class="ph-bold ph-chats-circle text-amber-600 text-sm"></i>
+                <span>廣東話諧音口訣速記</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-amber-200/90 text-amber-950 border border-amber-300 shadow-2xs">
+                ${item.cantoneseMnemonic.pun || '粵音口訣'}
+              </span>
             </div>
-            <p class="text-xs text-amber-950 font-bold leading-relaxed">${item.cantoneseMnemonic?.story || ''}</p>
-            <div class="pt-1 border-t border-amber-200/60 flex items-start space-x-1.5 text-[11px] text-amber-800">
-              <i class="ph-bold ph-eye text-amber-600 mt-0.5"></i><span><strong>圖像記憶：</strong>${item.cantoneseMnemonic?.visualCue || ''}</span>
+            <p class="text-xs text-amber-950 font-bold leading-relaxed">
+              ${item.cantoneseMnemonic.story || ''}
+            </p>
+            <div class="pt-2 border-t border-amber-200/80 flex items-start space-x-1.5 text-xs text-amber-900">
+              <i class="ph-bold ph-eye text-amber-600 mt-0.5 shrink-0"></i>
+              <div class="leading-relaxed">
+                <strong class="font-black text-amber-950">圖像記憶：</strong>
+                <span>${item.cantoneseMnemonic.visualCue || '在腦海建立清晰動態情境。'}</span>
+              </div>
             </div>
           </div>
         `;
@@ -737,6 +912,13 @@ mitigate, resilient, procrastinate, flourish"
             </div>
           </div>
         `;
+      } else if (isLoading) {
+        examplesHTML = `
+          <div class="space-y-2">
+            <div class="h-4 w-32 rounded skeleton-shimmer"></div>
+            <div class="h-16 w-full rounded-2xl skeleton-shimmer"></div>
+          </div>
+        `;
       }
 
       container.innerHTML = `
@@ -761,7 +943,7 @@ mitigate, resilient, procrastinate, flourish"
           <div class="p-4 bg-gradient-to-br from-blue-50/80 to-indigo-50/40 rounded-2xl border border-blue-100/80 space-y-1.5">
             <div class="flex items-center space-x-1.5 text-iosBlue text-[11px] font-bold"><i class="ph-bold ph-translate"></i><span>繁體中文釋義與用法</span></div>
             <div class="text-lg font-black text-gray-950">${item.chineseMeaning}</div>
-            <p class="text-xs text-gray-600 leading-relaxed font-medium">${item.chineseUsage}</p>
+            <p class="text-xs text-gray-600 leading-relaxed font-medium">${item.chineseUsage || '實用語境表達。'}</p>
           </div>
 
           ${mnemonicHTML}
