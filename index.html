@@ -90,6 +90,9 @@
           <i class="ph-bold ph-clipboard-text text-sm"></i>
           <span>貼上匯入</span>
         </button>
+        <button id="settings-btn" class="w-8 h-8 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center shadow-xs active:bg-gray-200 transition-all shrink-0">
+          <i class="ph-bold ph-gear text-sm"></i>
+        </button>
         <button id="add-word-btn" class="w-8 h-8 rounded-full bg-iosBlue text-white flex items-center justify-center shadow-xs active:bg-blue-600 transition-all shrink-0">
           <i class="ph-bold ph-plus text-sm"></i>
         </button>
@@ -314,6 +317,37 @@ mitigate, resilient, procrastinate, flourish"
       <div class="pt-2 flex space-x-2">
         <button id="dialog-cancel-btn" class="w-1/2 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs active:bg-gray-200">取消</button>
         <button id="dialog-confirm-btn" class="w-1/2 py-2.5 bg-rose-600 text-white rounded-xl font-bold text-xs active:bg-rose-700 shadow-xs">確認清空</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: API 設定 -->
+  <div id="settings-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-3.5 border border-gray-100">
+      <div class="flex items-center justify-between border-b pb-2.5">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i class="ph-bold ph-gear text-base"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-gray-950">設定 AI 大腦 (API Key)</h3>
+          </div>
+        </div>
+        <button id="close-settings-btn" class="w-7 h-7 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center">
+          <i class="ph-bold ph-x text-xs"></i>
+        </button>
+      </div>
+      <div class="space-y-2 text-xs">
+        <p class="text-gray-500 leading-relaxed">
+          由於你已將程式部署到個人網頁版，請填入免費的 Gemini API Key 來啟動廣東話口訣、圖像記憶與同反義詞生成功能。
+        </p>
+        <input id="input-api-key" type="password" placeholder="請貼上你的 API Key (AIzaSy...)" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-iosBlue focus:border-iosBlue bg-gray-50 font-mono text-[10px]">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-[11px] text-iosBlue font-bold hover:underline flex items-center space-x-1 mt-1">
+          <i class="ph-bold ph-link"></i><span>點擊此處免費獲取 Gemini API Key</span>
+        </a>
+      </div>
+      <div class="pt-2">
+        <button id="save-settings-btn" class="w-full py-2.5 bg-iosBlue text-white rounded-xl font-bold text-xs active:bg-blue-600 shadow-xs">儲存設定</button>
       </div>
     </div>
   </div>
@@ -580,8 +614,8 @@ mitigate, resilient, procrastinate, flourish"
     }
 
     async function generateAIEnhancedVocab(word, fastMeaning = '') {
-      const apiKey = "";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+      let keyToUse = localStorage.getItem('caneng_api_key') || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${keyToUse}`;
 
       const systemPrompt = `你是一位精通廣東話（香港粵語）母語、英文及記憶心理學的頂級字典語言學家。
 請為使用者查詢的英文單字或片語生成地道、富幽默感、好記的【廣東話諧音口訣速記】、【圖像記憶】、【真實同義詞】、【真實反義詞】及【2句真實情境例句】。
@@ -636,50 +670,53 @@ mitigate, resilient, procrastinate, flourish"
           body: JSON.stringify(payload)
         });
 
-        if (response.ok) {
-          const resJson = await response.json();
-          const candidateText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (candidateText) {
-            const parsed = JSON.parse(candidateText);
-            return {
-              phonetic: parsed.phonetic || `/${word}/`,
-              pos: parsed.pos || 'word',
-              chineseMeaning: parsed.chineseMeaning || fastMeaning,
-              chineseUsage: parsed.chineseUsage || '常用於現代英語地道情境。',
-              cantoneseMnemonic: {
-                pun: parsed.cantonesePun.startsWith('粵音') ? parsed.cantonesePun : `粵音「${parsed.cantonesePun}」`,
-                story: parsed.cantoneseStory,
-                visualCue: parsed.visualCue
-              },
-              synonyms: (parsed.synonyms || []).filter(s => s && s.toLowerCase() !== word.toLowerCase()),
-              antonyms: (parsed.antonyms || []).filter(a => a && a.toLowerCase() !== word.toLowerCase()),
-              examples: parsed.examples || []
-            };
-          }
+        if (!response.ok) {
+           if (response.status === 400) throw new Error("400_MISSING_KEY");
+           throw new Error(`API Error: ${response.status}`);
+        }
+
+        const resJson = await response.json();
+        const candidateText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (candidateText) {
+          const parsed = JSON.parse(candidateText);
+          return {
+            phonetic: parsed.phonetic || `/${word}/`,
+            pos: parsed.pos || 'word',
+            chineseMeaning: parsed.chineseMeaning || fastMeaning,
+            chineseUsage: parsed.chineseUsage || '常用於現代英語地道情境。',
+            cantoneseMnemonic: {
+              pun: parsed.cantonesePun.startsWith('粵音') ? parsed.cantonesePun : `粵音「${parsed.cantonesePun}」`,
+              story: parsed.cantoneseStory,
+              visualCue: parsed.visualCue
+            },
+            synonyms: (parsed.synonyms || []).filter(s => s && s.toLowerCase() !== word.toLowerCase()),
+            antonyms: (parsed.antonyms || []).filter(a => a && a.toLowerCase() !== word.toLowerCase()),
+            examples: parsed.examples || []
+          };
         }
       } catch (err) {
-        console.warn("AI 記憶引擎調用失敗，切換至開放語義網絡備援:", err);
+        console.warn("AI 記憶引擎調用失敗:", err);
+        const isKeyError = err.message.includes("400_MISSING_KEY") || !keyToUse;
+        
+        // 備援方案：Datamuse + 明確的 API 缺失提示
+        const datamuseData = await fetchDatamuseSemantics(word);
+        return {
+          phonetic: `/${word}/`,
+          pos: 'word',
+          chineseMeaning: fastMeaning || '實用英文詞彙',
+          chineseUsage: isKeyError ? '請設定 API Key 獲取詳細用法。' : '現代常用英語表達。',
+          cantoneseMnemonic: {
+            pun: isKeyError ? '⚠️ 尚未連接 AI 大腦' : `粵音速記「${word.slice(0, 4)}」`,
+            story: isKeyError ? '由於你將 App 部署到了外部網頁，系統缺少授權。請點擊右上角「齒輪圖標」填寫免費的 Gemini API Key，即可瞬間解鎖生動的 AI 廣東話口訣！' : `讀音連繫中文「${fastMeaning}」，大聲讀出母語音調加深記憶！`,
+            visualCue: isKeyError ? '取得 Key 後即可無限生成專屬圖像記憶畫面。' : `在腦海想像一個與「${fastMeaning}」相關的動態場景。`
+          },
+          synonyms: datamuseData.synonyms.length > 0 ? datamuseData.synonyms : (isKeyError ? ['請先設定API'] : ['related']),
+          antonyms: datamuseData.antonyms.length > 0 ? datamuseData.antonyms : (isKeyError ? ['請先設定API'] : ['opposite']),
+          examples: [
+            { tag: '系統提示', en: 'Please click the gear icon to set your Gemini API Key.', zh: '請點擊右上角齒輪設定填入 API Key 以啟動完整 AI 引擎功能。' }
+          ]
+        };
       }
-
-      // 備援方案：Datamuse + 智能廣東話音節規則
-      const datamuseData = await fetchDatamuseSemantics(word);
-      return {
-        phonetic: `/${word}/`,
-        pos: 'word',
-        chineseMeaning: fastMeaning || '實用英文詞彙',
-        chineseUsage: '現代常用英語表達。',
-        cantoneseMnemonic: {
-          pun: `粵音速記「${word.slice(0, 4)}」`,
-          story: `讀音連繫中文「${fastMeaning}」，大聲讀出母語音調加深記憶！`,
-          visualCue: `在腦海想像一個與「${fastMeaning}」息息相關的清晰動態場景。`
-        },
-        synonyms: datamuseData.synonyms.length > 0 ? datamuseData.synonyms : ['related', 'equivalent'],
-        antonyms: datamuseData.antonyms.length > 0 ? datamuseData.antonyms : ['opposite', 'contrary'],
-        examples: [
-          { tag: '實用語境', en: `The term "${word}" is frequently used in professional communication.`, zh: `該詞彙常出現於專業交流與日常語境之中。` },
-          { tag: '生活運用', en: `Mastering "${word}" helps express ideas with precision.`, zh: `熟練掌握「${word}」有助於更精準地表達語意。` }
-        ]
-      };
     }
 
     async function importExtractedWords(words, thenGoToQuiz = false) {
@@ -1345,6 +1382,28 @@ mitigate, resilient, procrastinate, flourish"
       [pasteModal, addModal, confirmDialog].forEach(m => {
         m.addEventListener('click', (e) => { if (e.target === m) m.style.display = 'none'; });
       });
+
+      // 8. API 設定 Modal 邏輯
+      const settingsModal = document.getElementById('settings-modal');
+      const inputApiKey = document.getElementById('input-api-key');
+      
+      document.getElementById('settings-btn').addEventListener('click', () => {
+        inputApiKey.value = localStorage.getItem('caneng_api_key') || '';
+        settingsModal.style.display = 'flex';
+      });
+      document.getElementById('close-settings-btn').addEventListener('click', () => settingsModal.style.display = 'none');
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        const key = inputApiKey.value.trim();
+        if(key) {
+           localStorage.setItem('caneng_api_key', key);
+           showToast("✅ API Key 已儲存！請重新查詢單字體驗完整功能。");
+        } else {
+           localStorage.removeItem('caneng_api_key');
+           showToast("已清除 API Key。");
+        }
+        settingsModal.style.display = 'none';
+      });
+      settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.style.display = 'none'; });
     }
 
     if (document.readyState === 'loading') {
